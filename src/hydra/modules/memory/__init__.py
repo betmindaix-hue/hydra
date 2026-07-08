@@ -1,4 +1,0 @@
-from hydra.modules.memory.service import MemoryService
-
-__all__ = ["MemoryService"]
-

@@ -3,16 +3,17 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
-from hydra.core.config import settings
-from hydra.db.base import Base
-from hydra.db import models  # noqa: F401
+from hydra.adapters import sqlalchemy_models  # noqa: F401
+from hydra.adapters.runtime_settings import PydanticRuntimeSettingsAdapter
+from hydra.infrastructure.database.base import Base
 
 config = context.config
+runtime_settings = PydanticRuntimeSettingsAdapter().load()
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-config.set_main_option("sqlalchemy.url", settings.database_url)
+config.set_main_option("sqlalchemy.url", runtime_settings.database_url)
 target_metadata = Base.metadata
 
 
@@ -32,7 +33,7 @@ def run_migrations_offline() -> None:
 
 def run_migrations_online() -> None:
     configuration = config.get_section(config.config_ini_section, {})
-    configuration["sqlalchemy.url"] = settings.database_url
+    configuration["sqlalchemy.url"] = runtime_settings.database_url
 
     connectable = engine_from_config(
         configuration,
@@ -51,4 +52,3 @@ if context.is_offline_mode():
     run_migrations_offline()
 else:
     run_migrations_online()
-

@@ -2,37 +2,39 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from hydra.api.router import api_router
-from hydra.core.architecture import LIVE_TRADING_ENABLED, PIPELINE_STAGES
-from hydra.core.config import settings
-from hydra.core.logging import configure_logging
+from hydra.adapters.runtime_settings import PydanticRuntimeSettingsAdapter
+from hydra.application.services import HealthStatusService, RootStatusService, SystemOverviewService
+from hydra.infrastructure.logging import configure_logging
+from hydra.ports.runtime_settings import RuntimeSettingsPort
+from hydra.presentation.api.router import build_root_router, build_versioned_api_router
 
 
-@asynccontextmanager
-async def lifespan(_: FastAPI):
-    configure_logging(settings.log_level)
-    yield
+def create_app(settings_port: RuntimeSettingsPort | None = None) -> FastAPI:
+    runtime_settings_port = settings_port or PydanticRuntimeSettingsAdapter()
+    runtime_settings = runtime_settings_port.load()
 
+    root_status_service = RootStatusService(runtime_settings_port)
+    health_status_service = HealthStatusService()
+    system_overview_service = SystemOverviewService()
 
-def create_app() -> FastAPI:
+    @asynccontextmanager
+    async def lifespan(_: FastAPI):
+        configure_logging(runtime_settings.log_level)
+        yield
+
     app = FastAPI(
-        title=settings.app_name,
-        version=settings.app_version,
+        title=runtime_settings.app_name,
+        version=runtime_settings.app_version,
         lifespan=lifespan,
     )
-    app.include_router(api_router, prefix=settings.api_prefix)
-
-    @app.get("/", tags=["system"])
-    def read_root() -> dict[str, object]:
-        return {
-            "name": settings.app_name,
-            "version": settings.app_version,
-            "environment": settings.environment,
-            "pipeline": list(PIPELINE_STAGES),
-            "live_trading_enabled": LIVE_TRADING_ENABLED,
-            "docs_source": "docs/",
-        }
-
+    app.include_router(build_root_router(root_status_service))
+    app.include_router(
+        build_versioned_api_router(
+            health_status_service=health_status_service,
+            system_overview_service=system_overview_service,
+        ),
+        prefix=runtime_settings.api_prefix,
+    )
     return app
 
 
