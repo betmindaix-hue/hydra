@@ -1,0 +1,38 @@
+[project]
+name = "hydra"
+version = "0.1.0"
+description = "Single-user quantitative crypto research platform"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "alembic>=1.16.2,<2.0.0",
+  "fastapi>=0.116.0,<1.0.0",
+  "psycopg[binary]>=3.2.9,<4.0.0",
+  "pydantic-settings>=2.10.1,<3.0.0",
+  "redis>=6.2.0,<7.0.0",
+  "sqlalchemy>=2.0.41,<3.0.0",
+  "uvicorn[standard]>=0.35.0,<1.0.0",
+]
+
+[dependency-groups]
+dev = [
+  "httpx>=0.28.1,<1.0.0",
+  "pytest>=8.4.1,<9.0.0",
+  "pytest-cov>=6.2.1,<7.0.0",
+]
+
+[build-system]
+requires = ["hatchling>=1.27.0"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/hydra"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.uv]
+package = true
+
