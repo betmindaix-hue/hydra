@@ -27,6 +27,9 @@ uv run mypy src tests tools
 uv run python tools/validate_alembic.py
 pre-commit run --all-files
 docker build .
+git push origin main
+Invoke-RestMethod -Uri 'https://api.github.com/repos/betmindaix-hue/hydra/actions/runs?branch=main&per_page=2'
+Invoke-RestMethod -Uri 'https://api.github.com/repos/betmindaix-hue/hydra/actions/runs/29029039004/jobs'
 ```
 
 ## Command Results
@@ -94,6 +97,28 @@ docker : The term 'docker' is not recognized as the name of a cmdlet, function, 
 
 Local Docker unavailability is acceptable because CI remains the authoritative Docker build validation path.
 
+### GitHub Actions CI
+
+Result: PASS
+
+Run details:
+
+- workflow run id: `29029039004`
+- head SHA: `64a352f1787e03c1c9a453547eba82c4214ee3c3`
+- status: `completed`
+- conclusion: `success`
+- run URL: [CI #1](https://github.com/betmindaix-hue/hydra/actions/runs/29029039004)
+
+Validated job steps:
+
+- `Install dependencies`: `success`
+- `Run Ruff`: `success`
+- `Run Black`: `success`
+- `Run Mypy`: `success`
+- `Run Pytest`: `success`
+- `Validate Alembic configuration`: `success`
+- `Build Docker image`: `success`
+
 ## Logging Design
 
 - `src/hydra/infrastructure/logging.py` owns log configuration, JSON formatting, level resolution, and startup diagnostics logging
@@ -125,4 +150,4 @@ Local Docker unavailability is acceptable because CI remains the authoritative D
 
 PASS
 
-The observability baseline is in place, fully tested locally, and ready for CI validation of the final commit.
+The observability baseline is in place, all local quality gates passed, and the final GitHub Actions run succeeded including Docker image validation.
