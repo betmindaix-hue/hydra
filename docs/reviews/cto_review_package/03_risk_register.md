@@ -50,4 +50,3 @@ quadrantChart
 ## CTO View
 
 None of these risks is unusual for an early platform. What matters is response speed. If these are left unmanaged while features grow, they will convert from manageable platform debt into systemic delivery drag.
-

@@ -1,0 +1,11 @@
+docs/reviews/a1_platform_hardening
+|-- 01_executive_summary.md
+|-- 02_quality_gate_report.md
+|-- 03_ci_cd_report.md
+|-- 04_architecture_fitness_report.md
+|-- 05_docker_reproducibility_report.md
+|-- 06_developer_experience_report.md
+|-- 07_remaining_technical_debt.md
+|-- README.md
+|-- changed_files.md
+`-- tree.txt

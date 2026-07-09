@@ -67,4 +67,3 @@ flowchart TD
 3. The biggest remaining gaps are not in business logic. They are in observability, CI/CD, security governance, reproducible builds, and persistence/application integration depth.
 4. The highest-leverage investment is a 60-90 day hardening sprint, not new feature breadth.
 5. Existing review documents now need governance attention because one earlier architecture review references pre-refactor package paths and should no longer be treated as the current architecture map.
-

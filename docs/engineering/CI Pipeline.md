@@ -43,4 +43,3 @@ The pipeline proves that:
 - package dependencies are lockfile-driven
 - architecture rules are test-enforced
 - the application remains buildable as a container
-

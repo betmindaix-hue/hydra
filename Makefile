@@ -23,4 +23,3 @@ docker:
 
 alembic-check:
 	$(PYTHON) tools/validate_alembic.py
-

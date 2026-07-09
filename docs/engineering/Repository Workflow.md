@@ -40,4 +40,3 @@ Changes should be merged only when:
 - required documentation is updated
 - review comments are resolved
 - no forbidden scope expansion has occurred
-

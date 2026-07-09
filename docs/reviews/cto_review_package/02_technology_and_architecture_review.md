@@ -86,4 +86,3 @@ The architecture should be treated as the project's protected backbone. Every ne
 Does this deepen the hexagonal design, or does it leak framework and persistence concerns back inward?
 
 If the answer is the second, it should be blocked.
-

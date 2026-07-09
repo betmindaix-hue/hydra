@@ -78,4 +78,3 @@ Permitted posture:
 - safe for continued internal architectural development
 - safe for controlled local and dev-environment evolution
 - not yet safe for operational dependency by other teams or production consumers
-
