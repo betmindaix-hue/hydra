@@ -5,7 +5,7 @@ description = "Single-user quantitative crypto research platform"
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
 dependencies = [
-  "alembic>=1.16.2,<2.0.0",
+  "alembic>=1.18.5,<2.0.0",
   "fastapi>=0.116.0,<1.0.0",
   "psycopg[binary]>=3.2.9,<4.0.0",
   "pydantic-settings>=2.10.1,<3.0.0",
