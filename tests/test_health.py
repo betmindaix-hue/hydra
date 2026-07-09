@@ -1,9 +1,8 @@
 import asyncio
 from typing import Any, TypedDict
 
-from httpx import ASGITransport, AsyncClient
-
-from hydra.main import app
+from hydra.main import create_app
+from tests.support import StaticSettingsPort, build_runtime_settings, request
 
 
 class ResponseEnvelope(TypedDict):
@@ -11,18 +10,12 @@ class ResponseEnvelope(TypedDict):
     payload: dict[str, Any]
 
 
-async def request(path: str) -> ResponseEnvelope:
-    transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://testserver") as client:
-        response = await client.get(path)
-    return ResponseEnvelope(
-        status_code=response.status_code,
-        payload=response.json(),
-    )
+def build_test_app():
+    return create_app(settings_port=StaticSettingsPort(build_runtime_settings()))
 
 
 def test_root_exposes_pipeline_and_scope() -> None:
-    response = asyncio.run(request("/"))
+    response = asyncio.run(request(build_test_app(), "/"))
     payload = response["payload"]
 
     assert response["status_code"] == 200
@@ -32,8 +25,10 @@ def test_root_exposes_pipeline_and_scope() -> None:
 
 
 def test_health_endpoint_returns_ok() -> None:
-    response = asyncio.run(request("/api/v1/health"))
+    response = asyncio.run(request(build_test_app(), "/api/v1/health"))
     payload = response["payload"]
 
     assert response["status_code"] == 200
     assert payload["status"] == "ok"
+    assert payload["checks"]["configuration"] == "ok"
+    assert payload["checks"]["database_session"] == "ok"

@@ -28,10 +28,12 @@ Required dependency direction:
 - `application -> domain, ports`
 - `adapters -> ports, infrastructure`
 - `infrastructure -> ports`
+- `shared` may be used only for framework-agnostic cross-cutting helpers
 
 Forbidden dependencies:
 
 - `domain` must not import FastAPI, SQLAlchemy, Redis, Pydantic, or `pydantic-settings`
+- `shared` must remain framework-free for the same libraries
 - `application` must not import FastAPI or SQLAlchemy
 - `presentation` must not access the ORM directly
 

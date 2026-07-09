@@ -27,6 +27,7 @@ The codebase is reorganized into these top-level packages under `src/hydra`:
 4. `adapters` implement `ports`.
 5. `infrastructure` may depend on `ports` and framework libraries.
 6. `main.py` acts as the composition root and wires the layers together.
+7. `shared` contains framework-agnostic cross-cutting helpers and may be consumed by outer layers when no domain or application ownership is appropriate.
 
 ## Package Diagram
 
@@ -37,6 +38,8 @@ flowchart LR
     Application --> Ports["ports (interfaces)"]
     Adapters["adapters (port implementations)"] --> Ports
     Infrastructure["infrastructure (config, logging, DB primitives)"] --> Ports
+    Presentation --> Shared["shared (framework-agnostic helpers)"]
+    Infrastructure --> Shared
     Adapters --> Infrastructure
     Main["main.py (composition root)"] --> Presentation
     Main --> Application

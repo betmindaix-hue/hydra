@@ -2,6 +2,7 @@ from fastapi import APIRouter
 
 from hydra.application.services import HealthStatusService, SystemOverviewService
 from hydra.presentation.api.routes.health import build_health_router
+from hydra.presentation.api.routes.operations import build_operations_router
 from hydra.presentation.api.routes.root import build_root_router
 from hydra.presentation.api.routes.system import build_system_router
 
@@ -16,4 +17,4 @@ def build_versioned_api_router(
     return router
 
 
-__all__ = ["build_root_router", "build_versioned_api_router"]
+__all__ = ["build_operations_router", "build_root_router", "build_versioned_api_router"]

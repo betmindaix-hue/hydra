@@ -24,12 +24,18 @@ class RootStatusDTO:
 @dataclass(frozen=True, slots=True)
 class HealthStatusDTO:
     status: str
-    live_trading_enabled: bool
+    app_name: str
+    app_version: str
+    environment: str
+    checks: dict[str, str]
 
     def to_payload(self) -> dict[str, object]:
         return {
             "status": self.status,
-            "live_trading_enabled": self.live_trading_enabled,
+            "app_name": self.app_name,
+            "app_version": self.app_version,
+            "environment": self.environment,
+            "checks": dict(self.checks),
         }
 
 
@@ -46,4 +52,22 @@ class SystemOverviewDTO:
             "core_entities": list(self.core_entities),
             "non_goals": list(self.non_goals),
             "modules": dict(self.modules),
+        }
+
+
+@dataclass(frozen=True, slots=True)
+class OperationalStatusDTO:
+    status: str
+    app_name: str
+    app_version: str
+    environment: str
+    checks: dict[str, str]
+
+    def to_payload(self) -> dict[str, object]:
+        return {
+            "status": self.status,
+            "app_name": self.app_name,
+            "app_version": self.app_version,
+            "environment": self.environment,
+            "checks": dict(self.checks),
         }
