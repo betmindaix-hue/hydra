@@ -33,6 +33,8 @@ pre-commit run --all-files
 docker build .
 git push origin main
 Invoke-RestMethod -Uri 'https://api.github.com/repos/betmindaix-hue/hydra/actions/runs?branch=main&per_page=6'
+Invoke-RestMethod -Uri 'https://api.github.com/repos/betmindaix-hue/hydra/actions/runs/29056811016/jobs'
+Invoke-RestMethod -Uri 'https://api.github.com/repos/betmindaix-hue/hydra/actions/runs/29056810980/jobs'
 ```
 
 ## Command Results
@@ -128,6 +130,30 @@ The local workstation still does not provide a Docker CLI, so Docker validation 
 - CI now includes repository security baseline validation
 - CI now includes release-readiness validation
 - Security workflow remains separate and intact
+
+Workflow evidence for commit `8fb2c53`:
+
+- CI run `29056811016`: `completed / success`
+- Security run `29056810980`: `completed / success`
+- CI run URL: [CI #29056811016](https://github.com/betmindaix-hue/hydra/actions/runs/29056811016)
+- Security run URL: [Security #29056810980](https://github.com/betmindaix-hue/hydra/actions/runs/29056810980)
+
+Validated CI steps:
+
+- `Run Ruff`: `success`
+- `Run Black`: `success`
+- `Run Mypy`: `success`
+- `Run Pytest`: `success`
+- `Validate Alembic configuration`: `success`
+- `Run repository security baseline checks`: `success`
+- `Run release readiness checks`: `success`
+- `Build Docker image`: `success`
+
+Validated Security workflow steps:
+
+- `repository-security-baseline`: `success`
+- `codeql (python)`: `success`
+- `dependency-review`: `skipped` on the push run by design because it is pull-request scoped
 
 ## Remaining Risks
 
