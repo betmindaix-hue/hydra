@@ -1,0 +1,10 @@
+* @betmindaix-hue
+
+/docs/adr/ @betmindaix-hue
+/docs/security/ @betmindaix-hue
+/docs/governance/ @betmindaix-hue
+/src/hydra/domain/ @betmindaix-hue
+/src/hydra/application/ @betmindaix-hue
+/src/hydra/ports/ @betmindaix-hue
+/src/hydra/infrastructure/ @betmindaix-hue
+/.github/workflows/ @betmindaix-hue

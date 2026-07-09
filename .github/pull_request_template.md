@@ -1,6 +1,6 @@
 ## Summary
 
-- Linked task or ADR:
+- Linked task / ADR / RFC:
 - Change summary:
 
 ## Validation
@@ -13,6 +13,9 @@
 - Security impact:
 - Observability impact:
 - Architecture impact:
+- Documentation impact:
+- Migration impact:
+- Release impact:
 
 ## Confirmations
 
@@ -20,3 +23,4 @@
 - [ ] No secrets, credentials, or private keys were added
 - [ ] Relevant docs or ADRs were updated if needed
 - [ ] Dependency changes were reviewed
+- [ ] `CHANGELOG.md` was updated or intentionally not needed for this change

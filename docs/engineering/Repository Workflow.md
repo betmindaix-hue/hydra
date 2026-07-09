@@ -11,16 +11,20 @@ Date: 2026-07-09
    - `make test`
    - `make alembic-check`
 4. Run `pre-commit run --all-files`.
-5. Commit using Conventional Commits.
-6. Push and open a pull request.
+5. Update `CHANGELOG.md` when the change has release impact.
+6. Link required ADR or RFC artifacts when applicable.
+7. Commit using Conventional Commits.
+8. Push and open a pull request.
 
 ## Pull Request Expectations
 
 Every pull request should include:
 
 - a concise problem statement
+- linked task, ADR, or RFC as appropriate
 - the SDS or engineering documents affected
 - validation evidence
+- documentation and release impact
 - explicit note if any acceptance item could not be locally verified
 
 ## Review Rules
