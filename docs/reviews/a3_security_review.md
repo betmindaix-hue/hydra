@@ -32,6 +32,8 @@ uv run python tools/check_repository_security.py
 docker build .
 git push origin main
 Invoke-RestMethod -Uri 'https://api.github.com/repos/betmindaix-hue/hydra/actions/runs?branch=main&per_page=5'
+Invoke-RestMethod -Uri 'https://api.github.com/repos/betmindaix-hue/hydra/actions/runs/29055387344/jobs'
+Invoke-RestMethod -Uri 'https://api.github.com/repos/betmindaix-hue/hydra/actions/runs/29055387365/jobs'
 ```
 
 ## Command Results
@@ -133,8 +135,30 @@ The local workstation still does not provide a Docker CLI. As with earlier platf
   - dependency review on pull requests
   - CodeQL analysis for Python
 - no deployment logic exists in the workflow
+- repository visibility was verified as `public`, so CodeQL is available without a private-repository licensing exception
 
-CI execution evidence will be attached after the post-push workflow run completes.
+Workflow evidence for commit `1b4ef22`:
+
+- CI run `29055387344`: `completed / success`
+- Security run `29055387365`: `completed / success`
+- CI run URL: [CI #29055387344](https://github.com/betmindaix-hue/hydra/actions/runs/29055387344)
+- Security run URL: [Security #29055387365](https://github.com/betmindaix-hue/hydra/actions/runs/29055387365)
+
+Validated CI steps:
+
+- `Install dependencies`: `success`
+- `Run Ruff`: `success`
+- `Run Black`: `success`
+- `Run Mypy`: `success`
+- `Run Pytest`: `success`
+- `Validate Alembic configuration`: `success`
+- `Build Docker image`: `success`
+
+Validated Security workflow steps:
+
+- `repository-security-baseline`: `success`
+- `codeql (python)`: `success`
+- `dependency-review`: `skipped` on the push run by design because it is pull-request scoped
 
 ## Remaining Risks
 
