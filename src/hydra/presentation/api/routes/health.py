@@ -11,4 +11,3 @@ def build_health_router(health_status_service: HealthStatusService) -> APIRouter
         return health_status_service.execute().to_payload()
 
     return router
-

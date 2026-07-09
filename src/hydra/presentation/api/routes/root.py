@@ -11,4 +11,3 @@ def build_root_router(root_status_service: RootStatusService) -> APIRouter:
         return root_status_service.execute().to_payload()
 
     return router
-

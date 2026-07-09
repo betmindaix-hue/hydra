@@ -17,4 +17,3 @@ class PydanticRuntimeSettingsAdapter(RuntimeSettingsPort):
             redis_url=settings.redis_url,
             log_level=settings.log_level,
         )
-

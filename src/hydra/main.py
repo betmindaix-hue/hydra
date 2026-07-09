@@ -1,3 +1,4 @@
+from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -18,7 +19,7 @@ def create_app(settings_port: RuntimeSettingsPort | None = None) -> FastAPI:
     system_overview_service = SystemOverviewService()
 
     @asynccontextmanager
-    async def lifespan(_: FastAPI):
+    async def lifespan(_: FastAPI) -> AsyncIterator[None]:
         configure_logging(runtime_settings.log_level)
         yield
 
@@ -39,4 +40,3 @@ def create_app(settings_port: RuntimeSettingsPort | None = None) -> FastAPI:
 
 
 app = create_app()
-

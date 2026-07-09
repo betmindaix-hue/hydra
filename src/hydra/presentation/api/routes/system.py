@@ -11,4 +11,3 @@ def build_system_router(system_overview_service: SystemOverviewService) -> APIRo
         return system_overview_service.execute().to_payload()
 
     return router
-

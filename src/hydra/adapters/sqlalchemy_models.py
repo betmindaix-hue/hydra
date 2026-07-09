@@ -5,7 +5,8 @@ from typing import Any
 from uuid import UUID, uuid4
 
 from sqlalchemy import Boolean, DateTime, Float, ForeignKey, String, Text, UniqueConstraint, func
-from sqlalchemy.dialects.postgresql import JSONB, UUID as PgUUID
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql import UUID as PgUUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from hydra.infrastructure.database.base import Base
@@ -14,7 +15,9 @@ from hydra.infrastructure.database.base import Base
 class MarketBarRecord(Base):
     __tablename__ = "market_bars"
     __table_args__ = (
-        UniqueConstraint("symbol", "timeframe", "open_time", name="uq_market_bars_symbol_timeframe_open_time"),
+        UniqueConstraint(
+            "symbol", "timeframe", "open_time", name="uq_market_bars_symbol_timeframe_open_time"
+        ),
     )
 
     id: Mapped[UUID] = mapped_column(PgUUID(as_uuid=True), primary_key=True, default=uuid4)
@@ -69,7 +72,9 @@ class StrategySignalRecord(Base):
     __tablename__ = "strategy_signals"
 
     id: Mapped[UUID] = mapped_column(PgUUID(as_uuid=True), primary_key=True, default=uuid4)
-    feature_set_id: Mapped[UUID] = mapped_column(ForeignKey("feature_sets.id", ondelete="CASCADE"), index=True)
+    feature_set_id: Mapped[UUID] = mapped_column(
+        ForeignKey("feature_sets.id", ondelete="CASCADE"), index=True
+    )
     strategy_name: Mapped[str] = mapped_column(String(64), index=True)
     strategy_version: Mapped[str] = mapped_column(String(32))
     signal: Mapped[str] = mapped_column(String(16))
@@ -111,7 +116,9 @@ class PaperTradeRecord(Base):
     __tablename__ = "paper_trades"
 
     id: Mapped[UUID] = mapped_column(PgUUID(as_uuid=True), primary_key=True, default=uuid4)
-    decision_id: Mapped[UUID] = mapped_column(ForeignKey("decisions.id", ondelete="CASCADE"), index=True)
+    decision_id: Mapped[UUID] = mapped_column(
+        ForeignKey("decisions.id", ondelete="CASCADE"), index=True
+    )
     symbol: Mapped[str] = mapped_column(String(32), index=True)
     side: Mapped[str] = mapped_column(String(8))
     quantity: Mapped[float] = mapped_column(Float)
@@ -145,15 +152,15 @@ class PatternRecord(Base):
     name: Mapped[str] = mapped_column(String(128), unique=True, index=True)
     description: Mapped[str] = mapped_column(Text)
     conditions: Mapped[dict[str, Any]] = mapped_column(JSONB)
-    discovered_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    discovered_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
 class ExperimentRecord(Base):
     __tablename__ = "experiments"
-    __table_args__ = (
-        UniqueConstraint("name", "version", name="uq_experiments_name_version"),
-    )
+    __table_args__ = (UniqueConstraint("name", "version", name="uq_experiments_name_version"),)
 
     id: Mapped[UUID] = mapped_column(PgUUID(as_uuid=True), primary_key=True, default=uuid4)
     name: Mapped[str] = mapped_column(String(128), index=True)
@@ -162,4 +169,3 @@ class ExperimentRecord(Base):
     parameters: Mapped[dict[str, Any]] = mapped_column(JSONB, default=dict)
     metrics: Mapped[dict[str, Any]] = mapped_column(JSONB, default=dict)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-

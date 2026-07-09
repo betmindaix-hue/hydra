@@ -37,4 +37,3 @@ class SystemOverviewService:
             non_goals=blueprint.non_goals,
             modules=module_summary_map(blueprint),
         )
-

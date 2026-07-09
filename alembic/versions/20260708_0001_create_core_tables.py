@@ -1,7 +1,7 @@
 """create core research tables"""
 
-from alembic import op
 import sqlalchemy as sa
+from alembic import op
 from sqlalchemy.dialects import postgresql
 
 revision = "20260708_0001"
@@ -19,7 +19,12 @@ def upgrade() -> None:
         sa.Column("hypothesis", sa.Text(), nullable=False),
         sa.Column("parameters", postgresql.JSONB(astext_type=sa.Text()), nullable=False),
         sa.Column("metrics", postgresql.JSONB(astext_type=sa.Text()), nullable=False),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
         sa.UniqueConstraint("name", "version", name="uq_experiments_name_version"),
     )
     op.create_index("ix_experiments_name", "experiments", ["name"])
@@ -38,7 +43,12 @@ def upgrade() -> None:
         sa.Column("volume", sa.Float(), nullable=False),
         sa.Column("source", sa.String(length=64), nullable=False),
         sa.Column("raw_payload", postgresql.JSONB(astext_type=sa.Text()), nullable=False),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
         sa.UniqueConstraint(
             "symbol",
             "timeframe",
@@ -56,8 +66,18 @@ def upgrade() -> None:
         sa.Column("name", sa.String(length=128), nullable=False),
         sa.Column("description", sa.Text(), nullable=False),
         sa.Column("conditions", postgresql.JSONB(astext_type=sa.Text()), nullable=False),
-        sa.Column("discovered_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=False),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=False),
+        sa.Column(
+            "discovered_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column(
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
     )
     op.create_index("ix_patterns_name", "patterns", ["name"], unique=True)
 
@@ -70,7 +90,12 @@ def upgrade() -> None:
         sa.Column("drawdown", sa.Float(), nullable=False),
         sa.Column("win_rate", sa.Float(), nullable=False),
         sa.Column("metrics", postgresql.JSONB(astext_type=sa.Text()), nullable=False),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
     )
     op.create_index("ix_performance_snapshots_as_of", "performance_snapshots", ["as_of"])
 
@@ -81,7 +106,12 @@ def upgrade() -> None:
         sa.Column("feature_namespace", sa.String(length=64), nullable=False),
         sa.Column("feature_version", sa.String(length=32), nullable=False),
         sa.Column("values", postgresql.JSONB(astext_type=sa.Text()), nullable=False),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
         sa.ForeignKeyConstraint(["market_bar_id"], ["market_bars.id"], ondelete="CASCADE"),
         sa.UniqueConstraint(
             "market_bar_id",
@@ -102,7 +132,12 @@ def upgrade() -> None:
         sa.Column("confidence", sa.Float(), nullable=False),
         sa.Column("explanation", sa.Text(), nullable=False),
         sa.Column("context", postgresql.JSONB(astext_type=sa.Text()), nullable=False),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
         sa.ForeignKeyConstraint(["feature_set_id"], ["feature_sets.id"], ondelete="CASCADE"),
     )
     op.create_index("ix_strategy_signals_feature_set_id", "strategy_signals", ["feature_set_id"])
@@ -117,8 +152,15 @@ def upgrade() -> None:
         sa.Column("size_fraction", sa.Float(), nullable=False),
         sa.Column("rationale", sa.Text(), nullable=False),
         sa.Column("constraints", postgresql.JSONB(astext_type=sa.Text()), nullable=False),
-        sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=False),
-        sa.ForeignKeyConstraint(["strategy_signal_id"], ["strategy_signals.id"], ondelete="CASCADE"),
+        sa.Column(
+            "created_at",
+            sa.DateTime(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.ForeignKeyConstraint(
+            ["strategy_signal_id"], ["strategy_signals.id"], ondelete="CASCADE"
+        ),
     )
     op.create_index("ix_decisions_strategy_signal_id", "decisions", ["strategy_signal_id"])
 
@@ -132,7 +174,9 @@ def upgrade() -> None:
         sa.Column("entry_price", sa.Float(), nullable=False),
         sa.Column("exit_price", sa.Float(), nullable=True),
         sa.Column("status", sa.String(length=16), nullable=False),
-        sa.Column("opened_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=False),
+        sa.Column(
+            "opened_at", sa.DateTime(timezone=True), server_default=sa.text("now()"), nullable=False
+        ),
         sa.Column("closed_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column("notes", postgresql.JSONB(astext_type=sa.Text()), nullable=False),
         sa.ForeignKeyConstraint(["decision_id"], ["decisions.id"], ondelete="CASCADE"),

@@ -263,4 +263,3 @@ The physical layout is modular; the runtime architecture is not yet modular.
 HYDRA is a promising, disciplined scaffold with good strategic boundaries and a repository structure that respects the documented pipeline. However, it is not yet a Clean Architecture implementation in the strict sense. The next design step should not be adding more framework code; it should be creating a framework-independent application/domain core and enforcing dependency direction around it.
 
 No production code was modified as part of this review. Only this report was added.
-

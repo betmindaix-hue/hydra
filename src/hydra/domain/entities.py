@@ -104,4 +104,3 @@ class Experiment:
     parameters: dict[str, Any] = field(default_factory=dict)
     metrics: dict[str, Any] = field(default_factory=dict)
     created_at: datetime | None = None
-

@@ -103,4 +103,3 @@ Rejected for this refactor because the goal is structural change without adding 
 - Future repository ports should be introduced when real use cases begin to consume persistence.
 - Future module-specific use cases should live in `application/`.
 - Future database adapters should continue to keep SQLAlchemy out of `domain/`.
-

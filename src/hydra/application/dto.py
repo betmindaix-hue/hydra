@@ -47,4 +47,3 @@ class SystemOverviewDTO:
             "non_goals": list(self.non_goals),
             "modules": dict(self.modules),
         }
-

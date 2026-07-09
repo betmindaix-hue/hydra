@@ -82,4 +82,3 @@ HYDRA_SYSTEM_BLUEPRINT = HydraSystemBlueprint(
 
 def module_summary_map(blueprint: HydraSystemBlueprint = HYDRA_SYSTEM_BLUEPRINT) -> dict[str, str]:
     return {module.name: module.purpose for module in blueprint.modules}
-

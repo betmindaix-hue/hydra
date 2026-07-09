@@ -24,4 +24,3 @@ def get_db(settings_port: RuntimeSettingsPort) -> Generator[Session, None, None]
         yield db
     finally:
         db.close()
-
