@@ -49,5 +49,8 @@ jobs:
       - name: Run release readiness checks
         run: uv run python tools/check_release_readiness.py
 
+      - name: Run operations readiness checks
+        run: uv run python tools/check_operations_readiness.py
+
       - name: Build Docker image
         run: docker build -t hydra-ci .

@@ -1,7 +1,7 @@
 UV ?= uv
 PYTHON ?= $(UV) run python
 
-.PHONY: test lint format run docker alembic-check
+.PHONY: test lint format run docker alembic-check ops-check
 
 test:
 	$(UV) run pytest
@@ -23,3 +23,6 @@ docker:
 
 alembic-check:
 	$(PYTHON) tools/validate_alembic.py
+
+ops-check:
+	$(PYTHON) tools/check_operations_readiness.py

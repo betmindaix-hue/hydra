@@ -27,6 +27,7 @@ Date: 2026-07-09
 - `make run`
 - `make docker`
 - `make alembic-check`
+- `make ops-check`
 
 ## Local Validation Flow
 
@@ -36,7 +37,8 @@ Before opening a PR, run:
 2. `make lint`
 3. `make test`
 4. `make alembic-check`
-5. `uv run pre-commit run --all-files`
+5. `make ops-check`
+6. `uv run pre-commit run --all-files`
 
 ## Notes
 

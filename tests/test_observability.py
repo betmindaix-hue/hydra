@@ -25,6 +25,14 @@ class ExplodingDiagnosticsPort(RuntimeDiagnosticsPort):
         raise AssertionError("live endpoint must not request readiness checks")
 
 
+class FailingDiagnosticsPort(RuntimeDiagnosticsPort):
+    def readiness_checks(self) -> tuple[RuntimeCheck, ...]:
+        return (
+            RuntimeCheck(name="configuration", status="ok"),
+            RuntimeCheck(name="database_session", status="error"),
+        )
+
+
 def build_app(
     *,
     diagnostics_port: RuntimeDiagnosticsPort | None = None,
@@ -87,6 +95,28 @@ def test_health_endpoint_returns_aggregate_status_and_metadata() -> None:
             "database_session": "ok",
         },
     }
+
+
+def test_ready_endpoint_returns_error_when_a_readiness_check_fails() -> None:
+    app = build_app(diagnostics_port=FailingDiagnosticsPort())
+
+    response = asyncio.run(request(app, "/ready"))
+
+    assert response["status_code"] == 200
+    assert response["payload"]["status"] == "error"
+    assert response["payload"]["checks"]["configuration"] == "ok"
+    assert response["payload"]["checks"]["database_session"] == "error"
+
+
+def test_health_endpoint_returns_error_when_aggregate_readiness_fails() -> None:
+    app = build_app(diagnostics_port=FailingDiagnosticsPort())
+
+    response = asyncio.run(request(app, "/health"))
+
+    assert response["status_code"] == 200
+    assert response["payload"]["status"] == "error"
+    assert response["payload"]["checks"]["configuration"] == "ok"
+    assert response["payload"]["checks"]["database_session"] == "error"
 
 
 def test_versioned_health_endpoint_retains_observability_payload() -> None:

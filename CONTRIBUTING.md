@@ -21,6 +21,9 @@ HYDRA is developed in platform-focused increments. Contributors must not add:
    - `uv run black --check .`
    - `uv run mypy src tests tools`
    - `uv run python tools/validate_alembic.py`
+   - `uv run python tools/check_repository_security.py`
+   - `uv run python tools/check_release_readiness.py`
+   - `uv run python tools/check_operations_readiness.py`
    - `pre-commit run --all-files`
 4. Update documentation for architecture, workflow, observability, or security changes.
 5. Review `docs/security/Security Review Checklist.md`.

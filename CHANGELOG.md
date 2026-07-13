@@ -12,6 +12,8 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - governance and release discipline baseline documentation
 - repository governance templates and issue templates
 - release-readiness validation tooling
+- runtime operations runbooks and runtime diagnostics contract
+- operations readiness validation tooling and CI integration
 
 ### Security
 

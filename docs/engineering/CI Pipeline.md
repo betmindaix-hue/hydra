@@ -22,7 +22,8 @@ The CI workflow runs on:
 9. Validate Alembic configuration
 10. Run repository security baseline checks
 11. Run release readiness checks
-12. Build the Docker image
+12. Run operations readiness checks
+13. Build the Docker image
 
 ## Failure Policy
 
@@ -37,6 +38,7 @@ Blocking failures include:
 - Alembic validation failures
 - repository security baseline failures
 - release readiness failures
+- operations readiness failures
 - Docker build failures
 
 ## Expected Outcomes
