@@ -29,7 +29,7 @@ This repository does not currently publish a dedicated security contact address 
 - Never commit secrets, tokens, credentials, or private keys.
 - Use `.env` files only for local development.
 - Keep `.env` out of version control.
-- Keep `.env.example` limited to placeholders.
+- Keep `.env.example`, `.env.local.example`, and `.env.test.example` limited to placeholders.
 - Never log raw secrets or full database credentials.
 
 ## v1 Non-Goals

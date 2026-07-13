@@ -60,7 +60,8 @@ def test_log_level_is_configurable() -> None:
 
 def test_startup_diagnostics_do_not_leak_database_secrets() -> None:
     settings = build_runtime_settings(
-        database_url="postgresql+psycopg://hydra:supersecret@localhost:5432/hydra"
+        database_url="postgresql+psycopg://hydra:supersecret@localhost:5432/hydra",
+        redis_url="redis://:redis-secret@localhost:6379/0",
     )
 
     diagnostics = build_startup_diagnostics(
@@ -69,15 +70,21 @@ def test_startup_diagnostics_do_not_leak_database_secrets() -> None:
         architecture_mode="ddd-hexagonal",
     )
 
+    assert diagnostics["app_name"] == "HYDRA"
+    assert diagnostics["app_version"] == "0.1.0"
+    assert diagnostics["environment"] == "test"
+    assert diagnostics["api_prefix"] == "/api/v1"
     assert diagnostics["database_backend"] == "postgresql+psycopg"
     assert "supersecret" not in json.dumps(diagnostics)
+    assert "redis-secret" not in json.dumps(diagnostics)
 
 
 def test_app_startup_logs_structured_diagnostics() -> None:
     stream = StringIO()
     settings_port = StaticSettingsPort(
         build_runtime_settings(
-            database_url="postgresql+psycopg://hydra:supersecret@localhost:5432/hydra"
+            database_url="postgresql+psycopg://hydra:supersecret@localhost:5432/hydra",
+            redis_url="redis://:redis-secret@localhost:6379/0",
         )
     )
     app = create_app(settings_port=settings_port, log_stream=stream)
@@ -93,8 +100,12 @@ def test_app_startup_logs_structured_diagnostics() -> None:
         line for line in log_lines if line["message"] == "application startup diagnostics"
     )
 
+    assert startup_log["app_name"] == "HYDRA"
+    assert startup_log["app_version"] == "0.1.0"
+    assert startup_log["environment"] == "test"
     assert startup_log["api_prefix"] == "/api/v1"
     assert startup_log["live_trading_enabled"] is False
     assert startup_log["architecture_mode"] == "ddd-hexagonal"
     assert startup_log["database_backend"] == "postgresql+psycopg"
     assert "supersecret" not in stream.getvalue()
+    assert "redis-secret" not in stream.getvalue()

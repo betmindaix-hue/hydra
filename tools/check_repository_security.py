@@ -5,6 +5,20 @@ from pathlib import Path
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 ENV_EXAMPLE_PATH = REPOSITORY_ROOT / ".env.example"
+ENV_EXAMPLE_PATHS = (
+    ENV_EXAMPLE_PATH,
+    REPOSITORY_ROOT / ".env.local.example",
+    REPOSITORY_ROOT / ".env.test.example",
+)
+REQUIRED_ENV_KEYS = (
+    "HYDRA_APP_NAME",
+    "HYDRA_APP_VERSION",
+    "HYDRA_ENVIRONMENT",
+    "HYDRA_API_PREFIX",
+    "HYDRA_DATABASE_URL",
+    "HYDRA_REDIS_URL",
+    "HYDRA_LOG_LEVEL",
+)
 SOURCE_DIRECTORIES = (
     REPOSITORY_ROOT / "src",
     REPOSITORY_ROOT / "tools",
@@ -32,8 +46,20 @@ FORBIDDEN_SOURCE_PATTERNS = (
 def assert_env_example_uses_placeholders(env_example_path: Path = ENV_EXAMPLE_PATH) -> None:
     contents = env_example_path.read_text(encoding="utf-8")
 
-    assert "<db_password>" in contents
-    assert "<environment>" in contents
+    for key in REQUIRED_ENV_KEYS:
+        assert f"{key}=" in contents
+
+    for raw_line in contents.splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#"):
+            continue
+        key, separator, value = line.partition("=")
+        assert separator == "=", f"{env_example_path} contains a malformed line: {raw_line}"
+        assert value, f"{env_example_path} must define a value for {key}"
+        assert (
+            "<" in value and ">" in value
+        ), f"{env_example_path} must use placeholder values for {key}"
+
     assert "supersecret" not in contents
     assert "ghp_" not in contents
     assert "AKIA" not in contents
@@ -76,7 +102,8 @@ def iter_text_files(paths: tuple[Path, ...]) -> list[Path]:
 
 
 def main() -> None:
-    assert_env_example_uses_placeholders()
+    for env_example_path in ENV_EXAMPLE_PATHS:
+        assert_env_example_uses_placeholders(env_example_path)
     assert_no_obvious_secrets()
     assert_no_forbidden_source_keywords()
 

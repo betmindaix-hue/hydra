@@ -21,7 +21,7 @@ All operational endpoints return structured JSON:
   "status": "ok",
   "app_name": "HYDRA",
   "app_version": "0.1.0",
-  "environment": "development",
+  "environment": "dev",
   "checks": {
     "configuration": "ok",
     "database_session": "ok"

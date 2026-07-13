@@ -7,7 +7,7 @@ Date: 2026-07-10
 - Never commit secrets.
 - Use `.env` files only for local development.
 - `.env` must remain gitignored.
-- `.env.example` must contain placeholders only.
+- `.env.example`, `.env.local.example`, and `.env.test.example` must contain placeholders only.
 - Never log secrets.
 - Database passwords must be redacted in diagnostics.
 - API keys must not be introduced in v1.
@@ -22,6 +22,7 @@ Date: 2026-07-10
 ## Local Development Guidance
 
 1. Copy `.env.example` to `.env`.
-2. Replace placeholders with local development values.
-3. Do not share `.env` contents in issues, logs, screenshots, or commits.
-4. Rotate any accidentally exposed credentials outside this repository.
+2. Use `.env.local.example` and `.env.test.example` as profile-specific references when preparing local or automated test values.
+3. Replace placeholders with local development values.
+4. Do not share `.env` contents in issues, logs, screenshots, or commits.
+5. Rotate any accidentally exposed credentials outside this repository.

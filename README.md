@@ -53,6 +53,7 @@ Core entities:
 ## Quick start
 
 1. Copy `.env.example` to `.env`.
+   Use `.env.local.example` as the preferred workstation reference and `.env.test.example` for automated test overrides.
 2. Start infrastructure with `docker compose up -d postgres redis`.
 3. If `uv` is not installed yet, run `python -m pip install uv`.
 4. Install dependencies with `uv sync`.

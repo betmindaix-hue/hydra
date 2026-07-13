@@ -85,6 +85,9 @@ def build_startup_diagnostics(
     architecture_mode: str,
 ) -> dict[str, object]:
     return {
+        "app_name": settings.app_name,
+        "app_version": settings.app_version,
+        "environment": settings.environment,
         "api_prefix": settings.api_prefix,
         "live_trading_enabled": live_trading_enabled,
         "architecture_mode": architecture_mode,

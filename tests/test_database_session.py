@@ -9,6 +9,7 @@ from sqlalchemy import text
 
 from hydra.infrastructure.database import session as session_module
 from hydra.ports.runtime_settings import RuntimeSettings
+from hydra.shared.runtime_environment import RuntimeEnvironment
 
 SESSION_MODULE_PATH = (
     Path(__file__).resolve().parents[1]
@@ -42,7 +43,7 @@ def build_runtime_settings(database_url: str = "sqlite+pysqlite:///:memory:") ->
     return RuntimeSettings(
         app_name="HYDRA",
         app_version="0.1.0",
-        environment="test",
+        environment=RuntimeEnvironment.TEST,
         api_prefix="/api/v1",
         database_url=database_url,
         redis_url="redis://localhost:6379/0",

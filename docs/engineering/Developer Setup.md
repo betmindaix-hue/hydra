@@ -13,6 +13,7 @@ Date: 2026-07-09
 ## Initial Setup
 
 1. Copy `.env.example` to `.env`.
+   Use `.env.local.example` for workstation-oriented placeholder guidance and `.env.test.example` for automated test profile guidance.
 2. Install dependencies:
    - `uv sync --group dev`
 3. Install git hooks:

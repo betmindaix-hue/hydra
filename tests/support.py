@@ -6,6 +6,7 @@ from typing import Any, TypedDict
 from httpx import ASGITransport, AsyncClient
 
 from hydra.ports.runtime_settings import RuntimeSettings
+from hydra.shared.runtime_environment import RuntimeEnvironment
 
 
 class StaticSettingsPort:
@@ -27,7 +28,8 @@ class ResponseEnvelope(TypedDict):
 def build_runtime_settings(
     *,
     database_url: str = "sqlite+pysqlite:///:memory:",
-    environment: str = "test",
+    redis_url: str = "redis://localhost:6379/0",
+    environment: RuntimeEnvironment = RuntimeEnvironment.TEST,
     log_level: str = "INFO",
     api_prefix: str = "/api/v1",
 ) -> RuntimeSettings:
@@ -37,7 +39,7 @@ def build_runtime_settings(
         environment=environment,
         api_prefix=api_prefix,
         database_url=database_url,
-        redis_url="redis://localhost:6379/0",
+        redis_url=redis_url,
         log_level=log_level,
     )
 

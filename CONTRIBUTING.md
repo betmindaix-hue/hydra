@@ -29,7 +29,7 @@ HYDRA is developed in platform-focused increments. Contributors must not add:
 
 - Never commit `.env`.
 - Never commit credentials, private keys, or tokens.
-- Keep `.env.example` to placeholders only.
+- Keep `.env.example`, `.env.local.example`, and `.env.test.example` to placeholders only.
 - Do not log secrets or raw database URLs.
 - Document security impact in the pull request template.
 

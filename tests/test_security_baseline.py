@@ -3,7 +3,9 @@ from __future__ import annotations
 import subprocess
 from pathlib import Path
 
+import pytest
 from tools.check_repository_security import (
+    ENV_EXAMPLE_PATHS,
     assert_env_example_uses_placeholders,
     assert_no_forbidden_source_keywords,
 )
@@ -27,13 +29,15 @@ def test_env_file_is_gitignored() -> None:
     assert ".env" in result.stdout
 
 
-def test_env_example_uses_placeholders_only() -> None:
-    assert_env_example_uses_placeholders(REPOSITORY_ROOT / ".env.example")
+@pytest.mark.parametrize("env_example_path", ENV_EXAMPLE_PATHS)
+def test_env_example_uses_placeholders_only(env_example_path: Path) -> None:
+    assert_env_example_uses_placeholders(env_example_path)
 
 
-def test_startup_diagnostics_do_not_emit_raw_database_url() -> None:
+def test_startup_diagnostics_do_not_emit_raw_runtime_secrets() -> None:
     settings = build_runtime_settings(
-        database_url="postgresql+psycopg://hydra:supersecret@localhost:5432/hydra"
+        database_url="postgresql+psycopg://hydra:supersecret@localhost:5432/hydra",
+        redis_url="redis://:redis-secret@localhost:6379/0",
     )
 
     diagnostics = build_startup_diagnostics(
@@ -45,7 +49,9 @@ def test_startup_diagnostics_do_not_emit_raw_database_url() -> None:
     diagnostics_payload = str(diagnostics)
 
     assert "database_url" not in diagnostics
+    assert "redis_url" not in diagnostics
     assert "supersecret" not in diagnostics_payload
+    assert "redis-secret" not in diagnostics_payload
     assert "postgresql+psycopg://hydra:supersecret@localhost:5432/hydra" not in diagnostics_payload
 
 
