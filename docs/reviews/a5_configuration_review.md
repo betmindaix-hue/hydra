@@ -58,7 +58,10 @@ Note: the local shell did not expose `uv` directly on `PATH`, so the equivalent 
 - Configuration validation is covered by repository tests that already run inside the existing CI workflow.
 - Existing CI checks remain in place: Ruff, Black, Mypy, Pytest, Alembic validation, repository security baseline, release readiness, and Docker build.
 - Existing Security workflow remains unchanged and continues to protect the repository security baseline.
-- Push-time CI and Security workflow evidence will be appended after the branch is pushed.
+- Push-time workflow evidence for commit `5ccaa9ba4259e61b1c73d17e482f9585d0dea246`:
+  - `CI` run `29215325243`: `completed / success`
+  - `Security` run `29215325252`: `completed / success`
+  - Repository: `https://github.com/betmindaix-hue/hydra`
 
 ## Remaining Risks
 
@@ -67,4 +70,4 @@ Note: the local shell did not expose `uv` directly on `PATH`, so the equivalent 
 
 ## Final Verdict
 
-PASS locally, pending remote CI and Security workflow confirmation.
+PASS
