@@ -56,7 +56,10 @@ Note: the local shell did not expose `uv` directly on `PATH`, so the equivalent
 
 - CI now runs `uv run python tools/check_operations_readiness.py` in addition to all previous checks.
 - The Security workflow remains unchanged.
-- Push-time CI and Security evidence will be appended after the branch is pushed.
+- Push-time workflow evidence for commit `5aabe20bee5f812da50f4674141f97985ffa81b8`:
+  - `CI` run `29216127760`: `completed / success`
+  - `Security` run `29216127768`: `completed / success`
+  - Repository: `https://github.com/betmindaix-hue/hydra`
 
 ## Remaining Risks
 
@@ -65,4 +68,4 @@ Note: the local shell did not expose `uv` directly on `PATH`, so the equivalent
 
 ## Final Verdict
 
-PASS locally, pending remote CI and Security workflow confirmation.
+PASS
