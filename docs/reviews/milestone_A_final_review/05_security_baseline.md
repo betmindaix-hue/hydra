@@ -32,6 +32,11 @@ Verified repository facts:
 - visibility is `public`
 - default branch is `main`
 - the repository remains out of exchange keys, trading, execution, and API-key support scope
+- Push-time Security workflow evidence for commit `4d47e74a571e5b15e94e9d7093e1c0c1a6229fe5`:
+  - Security run `29612484415`: `completed / success`
+  - job `87990109212` (`repository-security-baseline`): `success`
+  - job `87990109261` (`codeql (python)`): `success`
+  - job `87990133914` (`dependency-review`): `skipped` on push by design because the control is pull-request scoped
 
 ## Commands Or Source Files Reviewed
 

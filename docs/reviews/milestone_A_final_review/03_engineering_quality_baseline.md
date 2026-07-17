@@ -31,6 +31,10 @@ Repository-level engineering controls:
 - `.pre-commit-config.yaml` enforces formatting and hygiene hooks.
 - `Makefile` exposes normalized developer commands.
 - `tools/local_verify.py` and `tools/check_developer_workstation.py` reduce manual drift in local validation.
+- Push-time GitHub Actions evidence for commit `4d47e74a571e5b15e94e9d7093e1c0c1a6229fe5`:
+  - CI run `29612484440`: `completed / success`
+  - quality job `87990109339`: `success`
+  - `Build Docker image`: `success`
 
 ## Commands Or Source Files Reviewed
 

@@ -47,20 +47,30 @@ Milestone A completed its repository hardening objectives:
 
 ## CI Evidence
 
-This section will be updated after the A8 review package commit is pushed.
+Latest commit reviewed:
 
-- latest CI run id: pending push
-- latest CI conclusion: pending push
-- Docker build step result: pending push
+- commit: `4d47e74a571e5b15e94e9d7093e1c0c1a6229fe5`
+- commit message: `docs(review): finalize milestone A baseline`
+
+Latest CI evidence:
+
+- latest CI run id: `29612484440`
+- latest CI conclusion: `success`
+- quality job id: `87990109339`
+- Docker build step result: `success`
+- Pytest step result: `success`
+- developer workstation check step result: `success`
 
 ## Security Evidence
 
-This section will be updated after the A8 review package commit is pushed.
+Latest Security evidence:
 
-- latest Security run id: pending push
-- latest Security conclusion: pending push
-- CodeQL result: pending push
-- dependency-review status: expected to be skipped on push and active on pull requests
+- latest Security run id: `29612484415`
+- latest Security conclusion: `success`
+- repository-security-baseline job id: `87990109212`, result `success`
+- CodeQL job id: `87990109261`, result `success`
+- dependency-review job id: `87990133914`, result `skipped`
+- dependency-review explanation: skipped on push by design because the workflow limits that control to pull requests
 
 ## Remaining Risks
 
