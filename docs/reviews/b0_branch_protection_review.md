@@ -60,6 +60,8 @@ Final Verdict: PASS WITH OWNER ACTION REQUIRED
 - `python -m uv run pre-commit run --all-files`: PASS
 - `GET /repos/betmindaix-hue/hydra/branches/main`: PASS, branch metadata readable
 - `GET /repos/betmindaix-hue/hydra/branches/main/protection`: `401 Unauthorized`
+- B0 push-time `CI` run `29613384777`: `completed / success`
+- B0 push-time `Security` run `29613384816`: `completed / success`
 
 ## Branch Protection Current State
 
@@ -91,7 +93,7 @@ Recommended required rules for `main`:
 - prevent deletions
 
 Observed required check names from latest successful runs on commit
-`a3e80ad370af04c336e099d9fb3c14e63e7fe42f`:
+`30dff80acbe6d7d0afbcce3814b5c5691f440d3d`:
 
 - `CI / quality`
 - `Security / repository-security-baseline`
@@ -117,6 +119,18 @@ Expected Milestone B flow:
 8. merge only after reviews and checks pass
 
 Direct pushes to `main` should stop for Milestone B feature work.
+
+## B0 Workflow Evidence
+
+- commit: `30dff80acbe6d7d0afbcce3814b5c5691f440d3d`
+- commit message: `docs(governance): define milestone B entry gate`
+- CI run `29613384777`: `success`
+- CI job `87992972846` (`quality`): `success`
+- CI `Build Docker image`: `success`
+- Security run `29613384816`: `success`
+- Security job `87992973023` (`repository-security-baseline`): `success`
+- Security job `87992972948` (`codeql (python)`): `success`
+- Security job `87992973516` (`dependency-review`): `skipped` on push by design
 
 ## Remaining Risks
 

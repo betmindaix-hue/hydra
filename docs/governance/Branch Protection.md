@@ -55,11 +55,11 @@ The exact check names should be taken from the latest successful GitHub Actions
 results visible on the repository.
 
 Latest observed successful checks for commit
-`a3e80ad370af04c336e099d9fb3c14e63e7fe42f` on Friday, July 17, 2026:
+`30dff80acbe6d7d0afbcce3814b5c5691f440d3d` on Friday, July 17, 2026:
 
-- workflow `CI`, run `29612680096`, job `quality`
-- workflow `Security`, run `29612680058`, job `repository-security-baseline`
-- workflow `Security`, run `29612680058`, job `codeql (python)`
+- workflow `CI`, run `29613384777`, job `quality`
+- workflow `Security`, run `29613384816`, job `repository-security-baseline`
+- workflow `Security`, run `29613384816`, job `codeql (python)`
 
 Recommended required status checks in GitHub UI, when shown with workflow and
 job names:

@@ -50,10 +50,10 @@ Observed on Friday, July 17, 2026:
 - `.github/workflows/security.yml`
 - `.github/pull_request_template.md`
 
-Observed latest successful runs before this document:
+Observed latest successful runs before Milestone B entry:
 
-- CI run `29612680096`: `success`
-- Security run `29612680058`: `success`
+- CI run `29613384777`: `success`
+- Security run `29613384816`: `success`
 - Security job `dependency-review`: `skipped` on push by design
 
 ## Entry Decision
