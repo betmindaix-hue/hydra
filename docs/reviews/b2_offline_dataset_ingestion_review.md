@@ -2,7 +2,7 @@
 
 Date: 2026-07-17
 Scope: HYDRA Engineering Task B2
-PR: TBD until pull request is opened
+PR: https://github.com/betmindaix-hue/hydra/pull/13
 Feature branch: `feat/b2-offline-dataset-ingestion`
 
 ## What Changed
@@ -53,6 +53,15 @@ Feature branch: `feat/b2-offline-dataset-ingestion`
   - Docker is optional on the local workstation
   - `make` is optional on the local workstation
 - `python -m uv run pre-commit run --all-files`: PASS
+
+## GitHub Workflow Status
+
+- `CI` pull request run `29621175880`: `Success`
+- `Security` pull request run `29621175869`: `Success`
+- `CI` push run `29621115290`: `Success`
+- `Security / dependency-review (pull_request)`: `Success in 6s`
+- `Security / repository-security-baseline (pull_request)`: `Success in 3s`
+- `Security / codeql (python) (pull_request)`: `Success in 1m`
 
 ## Application / Service Summary
 
@@ -105,7 +114,6 @@ Feature branch: `feat/b2-offline-dataset-ingestion`
 
 ## Remaining Risks
 
-- PR link and GitHub workflow evidence must be updated after the pull request is opened
 - dataset source implementations are intentionally absent, so only in-memory and fixture-style ingestion is currently demonstrable
 - developer workstation validation still reports optional Docker and `make` warnings
 
