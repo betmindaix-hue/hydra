@@ -16,6 +16,7 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - operations readiness validation tooling and CI integration
 - developer workstation guidance, local verification tooling, and CI workstation validation
 - Milestone A final repository baseline review package
+- Milestone B branch protection guidance, PR workflow, and entry gate documentation
 
 ### Security
 
