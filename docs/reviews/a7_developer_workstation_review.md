@@ -10,6 +10,7 @@ Scope: HYDRA Engineering Task A7
 - Added `tools/local_verify.py` for consistent local quality gate execution with `uv` fallback support.
 - Added focused unit tests for the new workstation and local verification tools.
 - Updated CI, Makefile, developer setup guidance, operations docs, contributing guidance, and changelog entries to reflect the workstation baseline.
+- Aligned `pytest-cov` with branch coverage and isolated the CI coverage data file under the GitHub runner temp directory to eliminate the remote coverage combine failure.
 
 ## Commands Executed
 
@@ -28,7 +29,7 @@ Scope: HYDRA Engineering Task A7
 ## Command Results
 
 - `python tools/local_verify.py`: PASS
-- `python -m uv run pytest`: PASS (`61 passed in 6.12s`, total coverage `97%`)
+- `python -m uv run pytest`: PASS (`61 passed in 6.23s`, total coverage `97%` with branch coverage enabled)
 - `python -m uv run ruff check .`: PASS (`All checks passed!`)
 - `python -m uv run black --check .`: PASS (`57 files would be left unchanged.`)
 - `python -m uv run mypy src tests tools`: PASS (`Success: no issues found in 55 source files`)
@@ -66,16 +67,30 @@ quality gates were executed with the supported fallback form `python -m uv ...`.
 - CI now runs `uv run python tools/check_developer_workstation.py` in addition to all previous checks.
 - `tools/local_verify.py` is intentionally not run in CI because CI already executes the underlying steps directly.
 - The Security workflow remains unchanged.
-- Initial push-time workflow evidence for commit `7223be1aff2fbabce1c34becb5318c0add9bec48`:
-  - `CI` run `29610077572`: `completed / failure` at the `Run Pytest` step
-  - `Security` run `29610077602`: `completed / success`
-- The failing `CI` result could not be reproduced locally with either `python -m uv run pytest` or direct `uv run pytest`, so a follow-up verification commit is used to collect authoritative green evidence.
+- Initial remote failures on July 17, 2026:
+  - `CI` run `29610077572`: `completed / failure` at `Run Pytest`
+  - `CI` run `29610324898`: `completed / failure` at `Run Pytest`
+  - `CI` run `29610595058`: `completed / failure` after tests passed because `pytest-cov` raised `coverage.exceptions.DataError: Can't combine statement coverage data with branch data`
+  - `Security` runs `29610077602`, `29610324871`, and `29610595060`: `completed / success`
+- Root cause:
+  - `pytest-cov` in CI was combining coverage files with mismatched modes after the test suite completed.
+  - The failure appeared only remotely because GitHub Actions exercised the Linux coverage combine path that did not fail on the local Windows workstation.
+- Corrective change in commit `e4d67fe99484aeb4b1b3534ec593542638da721f`:
+  - Added `--cov-branch` to `[tool.pytest.ini_options]`
+  - Moved `COVERAGE_FILE` in CI to `${{ runner.temp }}/.coverage-ci`
+- Final remote evidence on July 17, 2026:
+  - `CI` run `29611357186`: `completed / success`
+  - `CI` quality job `87986543834`: all steps passed, including `Run Pytest` (`61 passed in 3.75s`), Alembic validation, developer workstation check, repository security baseline check, release readiness check, operations readiness check, and `docker build -t hydra-ci .`
+  - `Security` run `29611357259`: `completed / success`
+  - `Security` jobs `87986544119` (`repository-security-baseline`) and `87986544049` (`codeql (python)`) both completed successfully; `dependency-review` remained skipped as before.
 
 ## Remaining Risks
 
 - The workstation check validates command and file availability but cannot prove every local shell profile is configured correctly.
 - Local Docker behavior remains host-dependent, so contributors without Docker still rely on GitHub Actions for Docker build evidence.
+- GitHub Actions still emits Node 20 deprecation warnings for `actions/checkout@v4`, `actions/setup-python@v5`, and `astral-sh/setup-uv@v5`; these are warnings, not blockers, but should be tracked for future workflow maintenance.
+- A separate external `Dependabot` check appeared on the commit and was still `in_progress` during verification; it is outside the A7 CI and Security workflows and was not modified in this task.
 
 ## Final Verdict
 
-PASS locally, pending remote CI and Security workflow confirmation.
+PASS
