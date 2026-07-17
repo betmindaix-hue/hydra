@@ -1,16 +1,54 @@
 # B1 Market Data Domain Review
 
 Date: 2026-07-17
-Scope: HYDRA Engineering Task B1
+Scope: HYDRA Engineering Task B1 Hardening
+PR: https://github.com/betmindaix-hue/hydra/pull/11
+Feature branch: `feat/b1-market-data-domain`
 
 ## What Changed
 
-- added `src/hydra/domain/market_data.py` with pure Python market data value objects,
-  enums, validation rules, and ordering safeguards
-- added `src/hydra/ports/market_data.py` with offline-first repository and source contracts
-- updated architecture tests to enforce market data layer safety and exchange-agnostic code guards
-- added `tests/test_market_data_domain.py`
-- added ADR and offline-first research-data documentation
+- enforced strict offline-first behavior in `src/hydra/domain/market_data.py`
+- prevented `DataSourceDescriptor` from accepting `offline_only=False`
+- added a regression test proving mixed-mode or live-like source descriptors are rejected
+- investigated the failed Security workflow and fixed the repository-level root cause
+- moved PR #11 from draft to ready for review after CI and Security passed
+
+## Security Failure Investigation
+
+Failed workflow:
+
+- workflow: `Security`
+- run id: `29616456397`
+- commit: `c3f7edb7ebc0868954275f3b1326fbbf21ede7c4`
+- failing job: `dependency-review`
+- failing step: `Dependency review`
+
+Observed root cause:
+
+- GitHub reported: `Dependency review is not supported on this repository.`
+- the annotation pointed to repository settings and required `Dependency graph` to be enabled
+
+Applied fix:
+
+- enabled `Dependency graph` in repository security settings at
+  `https://github.com/betmindaix-hue/hydra/settings/security_analysis`
+- did not weaken the workflow
+- did not remove `CodeQL`
+- did not remove `repository-security-baseline`
+- did not disable `dependency-review`
+
+Verification after fix:
+
+- `Security` pull request run `29617021822`: `Success`
+- `dependency-review`: `Success in 7s`
+- `repository-security-baseline`: `Success in 7s`
+- `codeql (python)`: `Success in 53s`
+
+## Domain Hardening Summary
+
+- `DataSourceDescriptor` now rejects any non-offline configuration
+- string rendering always communicates `offline-only`
+- B1 can no longer construct a mixed-mode source descriptor
 
 ## Commands Executed
 
@@ -29,12 +67,11 @@ Scope: HYDRA Engineering Task B1
 ## Command Results
 
 - `python tools/local_verify.py`: PASS
-  - `84 passed in 6.77s`
-  - local verify alt kontrolleri geçti: Pytest, Ruff, Black, Mypy, Alembic,
-    repository security, release readiness, operations readiness
+  - `85 passed in 6.98s`
+  - local verify completed successfully
 - `python -m uv run pytest`: PASS
-  - `84 passed in 8.04s`
-  - toplam kapsama: `%96`
+  - `85 passed in 8.06s`
+  - total coverage: `96%`
 - `python -m uv run ruff check .`: PASS
 - `python -m uv run black --check .`: PASS
 - `python -m uv run mypy src tests tools`: PASS
@@ -46,48 +83,43 @@ Scope: HYDRA Engineering Task B1
 - `python -m uv run python tools/check_release_readiness.py`: PASS
 - `python -m uv run python tools/check_operations_readiness.py`: PASS
 - `python -m uv run python tools/check_developer_workstation.py`: PASS WITH WARNINGS
-  - Docker yerel iş istasyonunda opsiyonel olarak işaretlendi
-  - `make` opsiyonel olarak işaretlendi
+  - Docker is optional on the local workstation
+  - `make` is optional on the local workstation
 - `python -m uv run pre-commit run --all-files`: PASS
 
-## Domain Model Summary
+## CI and PR Status
 
-- `Symbol` and `Market` normalize input safely and reject blank values
-- `Timeframe` constrains bar intervals to supported values
-- `OHLCVBar` validates timestamp awareness, price bounds, and volume bounds
-- `MarketDataSeries` enforces one symbol, one market, one timeframe, and ordered bars
-- `DataQualityIssue` and `DataSourceDescriptor` keep offline quality metadata explicit
+- PR link: https://github.com/betmindaix-hue/hydra/pull/11
+- feature branch: `feat/b1-market-data-domain`
+- PR state: `ready for review`
+- `CI` pull request run `29617021827`: `Success`
+- `Security` pull request run `29617021822`: `Success`
+- `CI` push run `29617020043`: `Success`
 
-## Ports Summary
+## Scope Compliance
 
-- `OfflineMarketDataRepositoryPort` defines storage-facing contracts without implementation
-- `OfflineMarketDataSourcePort` defines offline load semantics without live network assumptions
-
-## Architecture Safety Summary
-
-- domain additions remain framework-free
-- ports remain adapter-free and infrastructure-free
-- new tests guard against exchange-specific keywords and live execution code patterns in code paths
-
-## Offline-First Compliance
-
-- no adapters added
-- no infrastructure implementation added
-- no API endpoints added
+- no live market data collection added
+- no Binance integration added
+- no exchange adapters added
+- no WebSocket added
+- no trading added
+- no AI added
+- no strategies added
+- no paper trading added
+- no exchange execution added
+- no order routing added
+- no wallet logic added
+- no API keys added
+- no real-money operations added
+- no background workers added
 - no external network calls added
 - no database persistence implementation added
-
-## PR Workflow Status
-
-- feature branch in use: `feat/b1-market-data-domain`
-- branch pushed to origin
-- pull request: commit sonrası açılacak
+- no API endpoints added
 
 ## Remaining Risks
 
-- legacy scaffold entities and new market data entities coexist, which can cause naming overlap until later consolidation
-- CI and security workflow confirmation still depends on the eventual pull request run
-- local developer workstation check reports optional warnings for Docker and `make`
+- GitHub Actions emits Node.js 20 deprecation warnings for several third-party actions even though the runs pass
+- the repository still contains temporary overlap between earlier scaffold entities and the newer market data domain model
 
 ## Final Verdict
 
