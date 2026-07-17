@@ -33,7 +33,7 @@ build-backend = "hatchling.build"
 packages = ["src/hydra"]
 
 [tool.pytest.ini_options]
-addopts = "-q --cov=hydra --cov-report=term-missing"
+addopts = "-q --cov=hydra --cov-branch --cov-report=term-missing"
 pythonpath = ["src"]
 testpaths = ["tests"]
 

@@ -39,7 +39,7 @@ jobs:
 
       - name: Run Pytest
         env:
-          COVERAGE_FILE: .coverage-ci
+          COVERAGE_FILE: ${{ runner.temp }}/.coverage-ci
         run: uv run pytest
 
       - name: Validate Alembic configuration
