@@ -20,10 +20,11 @@ The CI workflow runs on:
 7. Run Mypy
 8. Run Pytest with coverage output
 9. Validate Alembic configuration
-10. Run repository security baseline checks
-11. Run release readiness checks
-12. Run operations readiness checks
-13. Build the Docker image
+10. Run developer workstation checks
+11. Run repository security baseline checks
+12. Run release readiness checks
+13. Run operations readiness checks
+14. Build the Docker image
 
 ## Failure Policy
 
@@ -36,6 +37,7 @@ Blocking failures include:
 - typing failures
 - test failures
 - Alembic validation failures
+- developer workstation check failures
 - repository security baseline failures
 - release readiness failures
 - operations readiness failures

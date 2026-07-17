@@ -16,6 +16,8 @@ HYDRA is developed in platform-focused increments. Contributors must not add:
 1. Read the relevant ADRs and engineering documents under `docs/`.
 2. Keep changes aligned with DDD plus Hexagonal Architecture boundaries.
 3. Run local quality gates:
+   - `python tools/check_developer_workstation.py`
+   - `python tools/local_verify.py`
    - `uv run pytest`
    - `uv run ruff check .`
    - `uv run black --check .`

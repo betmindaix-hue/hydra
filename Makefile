@@ -1,7 +1,8 @@
 UV ?= uv
 PYTHON ?= $(UV) run python
+SYSTEM_PYTHON ?= python
 
-.PHONY: test lint format run docker alembic-check ops-check
+.PHONY: test lint format run docker alembic-check ops-check workstation-check local-verify
 
 test:
 	$(UV) run pytest
@@ -26,3 +27,9 @@ alembic-check:
 
 ops-check:
 	$(PYTHON) tools/check_operations_readiness.py
+
+workstation-check:
+	$(SYSTEM_PYTHON) tools/check_developer_workstation.py
+
+local-verify:
+	$(SYSTEM_PYTHON) tools/local_verify.py

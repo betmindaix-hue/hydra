@@ -8,12 +8,15 @@ Scope: HYDRA Engineering Task A6
 Use these commands during normal local platform work:
 
 ```powershell
+python tools/check_developer_workstation.py
+python tools/local_verify.py
 uv sync --group dev
 uv run pytest
 uv run ruff check .
 uv run black --check .
 uv run mypy src tests tools
 uv run python tools/validate_alembic.py
+uv run python tools/check_developer_workstation.py
 uv run python tools/check_repository_security.py
 uv run python tools/check_release_readiness.py
 uv run python tools/check_operations_readiness.py

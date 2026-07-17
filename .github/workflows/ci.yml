@@ -43,6 +43,9 @@ jobs:
       - name: Validate Alembic configuration
         run: uv run python tools/validate_alembic.py
 
+      - name: Run developer workstation checks
+        run: uv run python tools/check_developer_workstation.py
+
       - name: Run repository security baseline checks
         run: uv run python tools/check_repository_security.py
 

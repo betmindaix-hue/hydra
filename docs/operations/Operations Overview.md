@@ -43,6 +43,8 @@ uv run python tools/validate_alembic.py
 uv run python tools/check_repository_security.py
 uv run python tools/check_release_readiness.py
 uv run python tools/check_operations_readiness.py
+python tools/check_developer_workstation.py
+python tools/local_verify.py
 uv run uvicorn hydra.main:app --reload
 ```
 

@@ -14,6 +14,7 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - release-readiness validation tooling
 - runtime operations runbooks and runtime diagnostics contract
 - operations readiness validation tooling and CI integration
+- developer workstation guidance, local verification tooling, and CI workstation validation
 
 ### Security
 
