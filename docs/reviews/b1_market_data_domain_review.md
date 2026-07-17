@@ -2,8 +2,8 @@
 
 Date: 2026-07-17
 Scope: HYDRA Engineering Task B1 Hardening
-PR: https://github.com/betmindaix-hue/hydra/pull/11
-Feature branch: `feat/b1-market-data-domain`
+PR: https://github.com/betmindaix-hue/hydra/pull/12
+Feature branch: `feat/b1-market-data-domain-reapply`
 
 ## What Changed
 
@@ -11,9 +11,14 @@ Feature branch: `feat/b1-market-data-domain`
 - prevented `DataSourceDescriptor` from accepting `offline_only=False`
 - added a regression test proving mixed-mode or live-like source descriptors are rejected
 - investigated the failed Security workflow and fixed the repository-level root cause
-- moved PR #11 from draft to ready for review after CI and Security passed
+- preserved the historical explanation that PR #11 was closed without merging
+- reapplied the approved B1 scope onto PR #12 from the latest `main`
 
 ## Security Failure Investigation
+
+The workflow failure below belongs to superseded PR #11 and is kept only as historical
+root-cause context for why the repository security configuration was changed before B1
+was reapplied on PR #12.
 
 Failed workflow:
 
@@ -37,7 +42,7 @@ Applied fix:
 - did not remove `repository-security-baseline`
 - did not disable `dependency-review`
 
-Verification after fix:
+Historical verification after fix on PR #11:
 
 - `Security` pull request run `29617021822`: `Success`
 - `dependency-review`: `Success in 7s`
@@ -49,6 +54,8 @@ Verification after fix:
 - `DataSourceDescriptor` now rejects any non-offline configuration
 - string rendering always communicates `offline-only`
 - B1 can no longer construct a mixed-mode source descriptor
+- PR #11 was closed without merging, and the final approved B1 scope was reapplied on
+  PR #12 without adding any new runtime behavior
 
 ## Commands Executed
 
@@ -67,10 +74,10 @@ Verification after fix:
 ## Command Results
 
 - `python tools/local_verify.py`: PASS
-  - `85 passed in 6.98s`
+  - `85 passed in 7.10s`
   - local verify completed successfully
 - `python -m uv run pytest`: PASS
-  - `85 passed in 8.06s`
+  - `85 passed in 6.35s`
   - total coverage: `96%`
 - `python -m uv run ruff check .`: PASS
 - `python -m uv run black --check .`: PASS
@@ -89,12 +96,14 @@ Verification after fix:
 
 ## CI and PR Status
 
-- PR link: https://github.com/betmindaix-hue/hydra/pull/11
-- feature branch: `feat/b1-market-data-domain`
-- PR state: `ready for review`
-- `CI` pull request run `29617021827`: `Success`
-- `Security` pull request run `29617021822`: `Success`
-- `CI` push run `29617020043`: `Success`
+- PR link: https://github.com/betmindaix-hue/hydra/pull/12
+- feature branch: `feat/b1-market-data-domain-reapply`
+- PR state: `ready for review` after final checks
+- `CI` pull request run `29618383255`: `Success`
+- `Security` pull request run `29618383263`: `Success`
+- `CI` push run `29618303967`: `Success`
+- historical PR #11 run ids remain above only as root-cause context for the earlier
+  `dependency-review` failure and repository settings fix
 
 ## Scope Compliance
 
