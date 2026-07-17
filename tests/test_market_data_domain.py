@@ -228,3 +228,11 @@ def test_data_source_descriptor_representation_defaults_to_offline_first() -> No
     assert descriptor.offline_only is True
     assert descriptor.quality_issues == (issue,)
     assert str(descriptor) == "daily parquet import [offline-only]"
+
+
+def test_data_source_descriptor_rejects_mixed_mode_configuration() -> None:
+    with pytest.raises(ValueError, match="offline-only in B1"):
+        DataSourceDescriptor(
+            name="unexpected mixed mode import",
+            offline_only=False,
+        )

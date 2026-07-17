@@ -116,12 +116,13 @@ class DataSourceDescriptor:
     def __post_init__(self) -> None:
         if not isinstance(self.name, str) or not self.name.strip():
             raise ValueError("Data source name cannot be blank.")
+        if self.offline_only is not True:
+            raise ValueError("Data source descriptors must remain offline-only in B1.")
 
         object.__setattr__(self, "name", self.name.strip())
 
     def __str__(self) -> str:
-        mode = "offline-only" if self.offline_only else "mixed-mode"
-        return f"{self.name} [{mode}]"
+        return f"{self.name} [offline-only]"
 
 
 @dataclass(frozen=True, slots=True)
