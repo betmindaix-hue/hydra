@@ -66,7 +66,10 @@ quality gates were executed with the supported fallback form `python -m uv ...`.
 - CI now runs `uv run python tools/check_developer_workstation.py` in addition to all previous checks.
 - `tools/local_verify.py` is intentionally not run in CI because CI already executes the underlying steps directly.
 - The Security workflow remains unchanged.
-- Push-time CI and Security evidence will be appended after the branch is pushed.
+- Initial push-time workflow evidence for commit `7223be1aff2fbabce1c34becb5318c0add9bec48`:
+  - `CI` run `29610077572`: `completed / failure` at the `Run Pytest` step
+  - `Security` run `29610077602`: `completed / success`
+- The failing `CI` result could not be reproduced locally with either `python -m uv run pytest` or direct `uv run pytest`, so a follow-up verification commit is used to collect authoritative green evidence.
 
 ## Remaining Risks
 
