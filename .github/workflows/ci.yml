@@ -38,6 +38,8 @@ jobs:
         run: uv run mypy src tests tools
 
       - name: Run Pytest
+        env:
+          COVERAGE_FILE: .coverage-ci
         run: uv run pytest
 
       - name: Validate Alembic configuration
