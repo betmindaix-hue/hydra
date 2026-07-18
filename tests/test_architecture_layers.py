@@ -25,6 +25,14 @@ APPLICATION_FORBIDDEN_IMPORT_PREFIXES = (
     "fastapi",
     "sqlalchemy",
 )
+NETWORK_CLIENT_FORBIDDEN_IMPORT_PREFIXES = (
+    "aiohttp",
+    "httpx",
+    "requests",
+    "socket",
+    "urllib3",
+    "websockets",
+)
 PORTS_FORBIDDEN_IMPORT_PREFIXES = (
     "fastapi",
     "sqlalchemy",
@@ -164,8 +172,22 @@ def test_application_does_not_import_fastapi_or_sqlalchemy() -> None:
     )
 
 
+def test_market_data_ingestion_service_does_not_import_fastapi_or_sqlalchemy() -> None:
+    assert_no_forbidden_imports(
+        [SOURCE_ROOT / "application" / "market_data_ingestion_service.py"],
+        APPLICATION_FORBIDDEN_IMPORT_PREFIXES,
+    )
+
+
 def test_ports_are_framework_adapter_and_infrastructure_free() -> None:
     assert_no_forbidden_imports(iter_python_files("ports"), PORTS_FORBIDDEN_IMPORT_PREFIXES)
+
+
+def test_offline_dataset_ports_are_framework_adapter_and_infrastructure_free() -> None:
+    assert_no_forbidden_imports(
+        [SOURCE_ROOT / "ports" / "offline_dataset.py"],
+        PORTS_FORBIDDEN_IMPORT_PREFIXES,
+    )
 
 
 def test_application_depends_only_on_domain_ports_and_itself() -> None:
@@ -201,6 +223,17 @@ def test_codebase_remains_exchange_agnostic() -> None:
 
 def test_codebase_does_not_introduce_live_execution_keywords() -> None:
     assert_no_keyword_matches(iter_code_files(CODE_DIRECTORIES), FORBIDDEN_LIVE_EXECUTION_PATTERNS)
+
+
+def test_b2_modules_do_not_import_network_clients() -> None:
+    assert_no_forbidden_imports(
+        (
+            SOURCE_ROOT / "application" / "market_data_ingestion_dto.py",
+            SOURCE_ROOT / "application" / "market_data_ingestion_service.py",
+            SOURCE_ROOT / "ports" / "offline_dataset.py",
+        ),
+        NETWORK_CLIENT_FORBIDDEN_IMPORT_PREFIXES,
+    )
 
 
 def test_adapter_classes_implement_runtime_ports() -> None:
