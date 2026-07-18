@@ -91,6 +91,15 @@ FORBIDDEN_SIMULATION_INFRA_PATTERNS = tuple(
         rf"\b{'web' + 'socket'}\b",
     )
 )
+FORBIDDEN_STRATEGY_AUTOMATION_PATTERNS = tuple(
+    re.compile(pattern, re.IGNORECASE)
+    for pattern in (
+        rf"\b{'ai' + r'[\s_]*' + 'strategy'}\b",
+        rf"\b{'machine' + r'[\s_]+' + 'learning' + r'[\s_]*' + 'strategy'}\b",
+        rf"\b{'auto' + r'[\s_]*' + 'trading'}\b",
+        rf"\b{'automatic' + r'[\s_]+' + 'trading'}\b",
+    )
+)
 
 
 def iter_python_files(layer: str) -> list[Path]:
@@ -209,6 +218,13 @@ def test_backtesting_service_does_not_import_fastapi_or_sqlalchemy() -> None:
     )
 
 
+def test_strategy_research_service_does_not_import_fastapi_or_sqlalchemy() -> None:
+    assert_no_forbidden_imports(
+        [SOURCE_ROOT / "application" / "strategy_research_service.py"],
+        APPLICATION_FORBIDDEN_IMPORT_PREFIXES,
+    )
+
+
 def test_ports_are_framework_adapter_and_infrastructure_free() -> None:
     assert_no_forbidden_imports(iter_python_files("ports"), PORTS_FORBIDDEN_IMPORT_PREFIXES)
 
@@ -216,6 +232,13 @@ def test_ports_are_framework_adapter_and_infrastructure_free() -> None:
 def test_offline_dataset_ports_are_framework_adapter_and_infrastructure_free() -> None:
     assert_no_forbidden_imports(
         [SOURCE_ROOT / "ports" / "offline_dataset.py"],
+        PORTS_FORBIDDEN_IMPORT_PREFIXES,
+    )
+
+
+def test_strategy_research_ports_are_framework_adapter_and_infrastructure_free() -> None:
+    assert_no_forbidden_imports(
+        [SOURCE_ROOT / "ports" / "strategy_research.py"],
         PORTS_FORBIDDEN_IMPORT_PREFIXES,
     )
 
@@ -288,10 +311,39 @@ def test_b3_modules_do_not_import_outer_runtime_layers() -> None:
     )
 
 
+def test_b4_modules_do_not_import_network_clients() -> None:
+    assert_no_forbidden_imports(
+        (
+            SOURCE_ROOT / "ports" / "strategy_research.py",
+            SOURCE_ROOT / "application" / "strategy_research_dto.py",
+            SOURCE_ROOT / "application" / "strategy_research_service.py",
+        ),
+        NETWORK_CLIENT_FORBIDDEN_IMPORT_PREFIXES,
+    )
+
+
+def test_b4_modules_do_not_import_outer_runtime_layers() -> None:
+    assert_no_forbidden_imports(
+        (
+            SOURCE_ROOT / "ports" / "strategy_research.py",
+            SOURCE_ROOT / "application" / "strategy_research_dto.py",
+            SOURCE_ROOT / "application" / "strategy_research_service.py",
+        ),
+        B3_INTERNAL_FORBIDDEN_IMPORT_PREFIXES,
+    )
+
+
 def test_codebase_does_not_introduce_simulated_execution_infrastructure_keywords() -> None:
     assert_no_keyword_matches(
         iter_code_files(CODE_DIRECTORIES),
         FORBIDDEN_SIMULATION_INFRA_PATTERNS,
+    )
+
+
+def test_codebase_does_not_introduce_b4_strategy_automation_keywords() -> None:
+    assert_no_keyword_matches(
+        iter_code_files(CODE_DIRECTORIES),
+        FORBIDDEN_STRATEGY_AUTOMATION_PATTERNS,
     )
 
 
