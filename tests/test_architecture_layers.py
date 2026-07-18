@@ -33,6 +33,10 @@ NETWORK_CLIENT_FORBIDDEN_IMPORT_PREFIXES = (
     "urllib3",
     "websockets",
 )
+B3_INTERNAL_FORBIDDEN_IMPORT_PREFIXES = (
+    "hydra.adapters",
+    "hydra.infrastructure",
+)
 PORTS_FORBIDDEN_IMPORT_PREFIXES = (
     "fastapi",
     "sqlalchemy",
@@ -72,7 +76,19 @@ FORBIDDEN_LIVE_EXECUTION_PATTERNS = tuple(
         rf"\b{'create' + '_order'}\b",
         rf"\b{'execute' + '_order'}\b",
         rf"\b{'route' + '_order'}\b",
-        rf"\b{'wallet' + '_balance'}\b",
+        rf"\b{'wall' + 'et' + '_balance'}\b",
+    )
+)
+FORBIDDEN_SIMULATION_INFRA_PATTERNS = tuple(
+    re.compile(pattern, re.IGNORECASE)
+    for pattern in (
+        rf"\b{'exchange' + '_' + 'client'}\b",
+        rf"\b{'bro' + 'ker' + '_' + 'client'}\b",
+        rf"\b{'order' + '_' + 'router'}\b",
+        rf"\b{'execution' + '_' + 'client'}\b",
+        rf"\b{'wall' + 'et'}\b",
+        rf"\b{'api' + r'[\s_]*' + 'key'}\b",
+        rf"\b{'web' + 'socket'}\b",
     )
 )
 
@@ -162,6 +178,13 @@ def test_market_data_domain_model_is_framework_free() -> None:
     )
 
 
+def test_backtesting_domain_model_is_framework_free() -> None:
+    assert_no_forbidden_imports(
+        [SOURCE_ROOT / "domain" / "backtesting.py"],
+        DOMAIN_FORBIDDEN_IMPORT_PREFIXES,
+    )
+
+
 def test_shared_is_framework_free() -> None:
     assert_no_forbidden_imports(iter_python_files("shared"), SHARED_FORBIDDEN_IMPORT_PREFIXES)
 
@@ -175,6 +198,13 @@ def test_application_does_not_import_fastapi_or_sqlalchemy() -> None:
 def test_market_data_ingestion_service_does_not_import_fastapi_or_sqlalchemy() -> None:
     assert_no_forbidden_imports(
         [SOURCE_ROOT / "application" / "market_data_ingestion_service.py"],
+        APPLICATION_FORBIDDEN_IMPORT_PREFIXES,
+    )
+
+
+def test_backtesting_service_does_not_import_fastapi_or_sqlalchemy() -> None:
+    assert_no_forbidden_imports(
+        [SOURCE_ROOT / "application" / "backtesting_service.py"],
         APPLICATION_FORBIDDEN_IMPORT_PREFIXES,
     )
 
@@ -233,6 +263,35 @@ def test_b2_modules_do_not_import_network_clients() -> None:
             SOURCE_ROOT / "ports" / "offline_dataset.py",
         ),
         NETWORK_CLIENT_FORBIDDEN_IMPORT_PREFIXES,
+    )
+
+
+def test_b3_modules_do_not_import_network_clients() -> None:
+    assert_no_forbidden_imports(
+        (
+            SOURCE_ROOT / "domain" / "backtesting.py",
+            SOURCE_ROOT / "application" / "backtesting_dto.py",
+            SOURCE_ROOT / "application" / "backtesting_service.py",
+        ),
+        NETWORK_CLIENT_FORBIDDEN_IMPORT_PREFIXES,
+    )
+
+
+def test_b3_modules_do_not_import_outer_runtime_layers() -> None:
+    assert_no_forbidden_imports(
+        (
+            SOURCE_ROOT / "domain" / "backtesting.py",
+            SOURCE_ROOT / "application" / "backtesting_dto.py",
+            SOURCE_ROOT / "application" / "backtesting_service.py",
+        ),
+        B3_INTERNAL_FORBIDDEN_IMPORT_PREFIXES,
+    )
+
+
+def test_codebase_does_not_introduce_simulated_execution_infrastructure_keywords() -> None:
+    assert_no_keyword_matches(
+        iter_code_files(CODE_DIRECTORIES),
+        FORBIDDEN_SIMULATION_INFRA_PATTERNS,
     )
 
 

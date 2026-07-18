@@ -1,5 +1,16 @@
 """Pure domain models for HYDRA."""
 
+from hydra.domain.backtesting import (
+    BacktestDirection,
+    BacktestId,
+    BacktestMetrics,
+    BacktestResult,
+    BacktestTimeRange,
+    EquityCurvePoint,
+    ResearchSignal,
+    SimulatedPosition,
+    SimulatedTrade,
+)
 from hydra.domain.entities import (
     Decision,
     Experiment,
@@ -23,10 +34,16 @@ from hydra.domain.market_data import (
 from hydra.domain.system import HYDRA_SYSTEM_BLUEPRINT, HydraSystemBlueprint, ModuleDefinition
 
 __all__ = [
+    "BacktestDirection",
+    "BacktestId",
+    "BacktestMetrics",
+    "BacktestResult",
+    "BacktestTimeRange",
     "DataQualityIssue",
     "DataQualityIssueType",
     "DataSourceDescriptor",
     "Decision",
+    "EquityCurvePoint",
     "Experiment",
     "FeatureSet",
     "HYDRA_SYSTEM_BLUEPRINT",
@@ -39,6 +56,9 @@ __all__ = [
     "PaperTrade",
     "Pattern",
     "PerformanceSnapshot",
+    "ResearchSignal",
+    "SimulatedPosition",
+    "SimulatedTrade",
     "StrategySignal",
     "Symbol",
     "Timeframe",
