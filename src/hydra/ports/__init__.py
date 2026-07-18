@@ -6,6 +6,7 @@ from hydra.ports.market_data import (
 )
 from hydra.ports.offline_dataset import OfflineDatasetSourcePort
 from hydra.ports.runtime_settings import RuntimeSettings, RuntimeSettingsPort
+from hydra.ports.strategy_research import StrategyResearchProviderPort
 
 __all__ = [
     "OfflineDatasetSourcePort",
@@ -13,4 +14,5 @@ __all__ = [
     "OfflineMarketDataSourcePort",
     "RuntimeSettings",
     "RuntimeSettingsPort",
+    "StrategyResearchProviderPort",
 ]
