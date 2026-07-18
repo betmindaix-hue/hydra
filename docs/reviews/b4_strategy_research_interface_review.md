@@ -2,8 +2,9 @@
 
 Date: 2026-07-18
 Scope: HYDRA Engineering Task B4
-PR: TBD until pull request is opened
+PR: https://github.com/betmindaix-hue/hydra/pull/15
 Feature branch: `feat/b4-strategy-research-interface`
+PR state: Draft
 
 ## What Changed
 
@@ -55,6 +56,11 @@ Feature branch: `feat/b4-strategy-research-interface`
   - `make` is optional on the developer workstation
   - summary: `0 failures, 2 warnings`
 - `python -m uv run pre-commit run --all-files`: PASS
+
+## GitHub Workflow Status
+
+- `CI` pull request run `29651365487`: `Success`
+- `Security` pull request run `29651365462`: `Success`
 
 ## Port Summary
 
