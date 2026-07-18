@@ -7,6 +7,7 @@ from collections.abc import Iterable
 from pathlib import Path
 from typing import Any
 
+from hydra.adapters.strategy_research import DeterministicFixtureStrategyResearchProvider
 from hydra.ports.observability import RuntimeDiagnosticsPort
 from hydra.ports.runtime_settings import RuntimeSettingsPort
 
@@ -33,9 +34,19 @@ NETWORK_CLIENT_FORBIDDEN_IMPORT_PREFIXES = (
     "urllib3",
     "websockets",
 )
+B5_FILESYSTEM_FORBIDDEN_IMPORT_PREFIXES = (
+    "pathlib",
+    "csv",
+    "json",
+    "sqlite3",
+)
 B3_INTERNAL_FORBIDDEN_IMPORT_PREFIXES = (
     "hydra.adapters",
     "hydra.infrastructure",
+)
+B5_OUTER_LAYER_FORBIDDEN_IMPORT_PREFIXES = (
+    "hydra.infrastructure",
+    "hydra.presentation",
 )
 PORTS_FORBIDDEN_IMPORT_PREFIXES = (
     "fastapi",
@@ -333,6 +344,34 @@ def test_b4_modules_do_not_import_outer_runtime_layers() -> None:
     )
 
 
+def test_b5_provider_does_not_import_frameworks_or_configuration_layers() -> None:
+    assert_no_forbidden_imports(
+        [SOURCE_ROOT / "adapters" / "strategy_research" / "deterministic_fixture_provider.py"],
+        DOMAIN_FORBIDDEN_IMPORT_PREFIXES,
+    )
+
+
+def test_b5_provider_does_not_import_network_clients() -> None:
+    assert_no_forbidden_imports(
+        [SOURCE_ROOT / "adapters" / "strategy_research" / "deterministic_fixture_provider.py"],
+        NETWORK_CLIENT_FORBIDDEN_IMPORT_PREFIXES,
+    )
+
+
+def test_b5_provider_does_not_import_outer_runtime_layers() -> None:
+    assert_no_forbidden_imports(
+        [SOURCE_ROOT / "adapters" / "strategy_research" / "deterministic_fixture_provider.py"],
+        B5_OUTER_LAYER_FORBIDDEN_IMPORT_PREFIXES,
+    )
+
+
+def test_b5_provider_does_not_import_filesystem_or_serialization_modules() -> None:
+    assert_no_forbidden_imports(
+        [SOURCE_ROOT / "adapters" / "strategy_research" / "deterministic_fixture_provider.py"],
+        B5_FILESYSTEM_FORBIDDEN_IMPORT_PREFIXES,
+    )
+
+
 def test_codebase_does_not_introduce_simulated_execution_infrastructure_keywords() -> None:
     assert_no_keyword_matches(
         iter_code_files(CODE_DIRECTORIES),
@@ -345,6 +384,31 @@ def test_codebase_does_not_introduce_b4_strategy_automation_keywords() -> None:
         iter_code_files(CODE_DIRECTORIES),
         FORBIDDEN_STRATEGY_AUTOMATION_PATTERNS,
     )
+
+
+def test_b5_provider_keeps_exchange_keyword_guards() -> None:
+    assert_no_keyword_matches(
+        [SOURCE_ROOT / "adapters" / "strategy_research" / "deterministic_fixture_provider.py"],
+        FORBIDDEN_EXCHANGE_PATTERNS,
+    )
+
+
+def test_b5_provider_keeps_live_execution_keyword_guards() -> None:
+    assert_no_keyword_matches(
+        [SOURCE_ROOT / "adapters" / "strategy_research" / "deterministic_fixture_provider.py"],
+        FORBIDDEN_LIVE_EXECUTION_PATTERNS,
+    )
+
+
+def test_b5_provider_keeps_strategy_automation_keyword_guards() -> None:
+    assert_no_keyword_matches(
+        [SOURCE_ROOT / "adapters" / "strategy_research" / "deterministic_fixture_provider.py"],
+        FORBIDDEN_STRATEGY_AUTOMATION_PATTERNS,
+    )
+
+
+def test_b5_provider_class_name_does_not_use_adapter_suffix() -> None:
+    assert not DeterministicFixtureStrategyResearchProvider.__name__.endswith("Adapter")
 
 
 def test_adapter_classes_implement_runtime_ports() -> None:
