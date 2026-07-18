@@ -2,9 +2,9 @@
 
 Date: 2026-07-18
 Scope: HYDRA Engineering Task B6
-PR: TBD until pull request is opened
+PR: https://github.com/betmindaix-hue/hydra/pull/17
 Feature branch: `feat/b6-research-reporting-foundation`
-PR state: Not opened yet
+PR state: Draft
 
 ## What Changed
 
@@ -61,6 +61,12 @@ PR state: Not opened yet
   - `make` is optional on the developer workstation
   - summary: `0 failures, 2 warnings`
 - `python -m uv run pre-commit run --all-files`: PASS
+
+## GitHub Workflow Status
+
+- code change commit: `1a3a9f8ae035a83368d3c056c4816bc538a772d2`
+- `CI` pull request run `29665764317`: `Success`
+- `Security` pull request run `29665764320`: `Success`
 
 ## Domain Summary
 
@@ -135,10 +141,9 @@ PR state: Not opened yet
 
 ## Remaining Risks
 
-- CI and Security workflow evidence still needs to be attached after PR creation
 - B6 intentionally stops at in-memory summaries and does not yet provide
   downstream export or persistence boundaries
 
 ## Final Verdict
 
-PASS WITH WARNINGS
+PASS
