@@ -31,6 +31,15 @@ from hydra.domain.market_data import (
     Symbol,
     Timeframe,
 )
+from hydra.domain.research_reporting import (
+    EquityCurveSummary,
+    MetricSnapshot,
+    ResearchReport,
+    ResearchReportId,
+    RiskSnapshot,
+    SignalSummary,
+    SimulatedTradeSummary,
+)
 from hydra.domain.system import HYDRA_SYSTEM_BLUEPRINT, HydraSystemBlueprint, ModuleDefinition
 
 __all__ = [
@@ -51,15 +60,22 @@ __all__ = [
     "Market",
     "MarketBar",
     "MarketDataSeries",
+    "MetricSnapshot",
     "ModuleDefinition",
     "OHLCVBar",
     "PaperTrade",
     "Pattern",
     "PerformanceSnapshot",
+    "ResearchReport",
+    "ResearchReportId",
     "ResearchSignal",
+    "RiskSnapshot",
+    "SignalSummary",
     "SimulatedPosition",
     "SimulatedTrade",
+    "SimulatedTradeSummary",
     "StrategySignal",
     "Symbol",
     "Timeframe",
+    "EquityCurveSummary",
 ]

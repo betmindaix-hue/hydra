@@ -40,6 +40,13 @@ B5_FILESYSTEM_FORBIDDEN_IMPORT_PREFIXES = (
     "json",
     "sqlite3",
 )
+B6_APPLICATION_FORBIDDEN_IMPORT_PREFIXES = (
+    "fastapi",
+    "sqlalchemy",
+    "redis",
+    "pydantic",
+    "pydantic_settings",
+)
 B3_INTERNAL_FORBIDDEN_IMPORT_PREFIXES = (
     "hydra.adapters",
     "hydra.infrastructure",
@@ -47,6 +54,30 @@ B3_INTERNAL_FORBIDDEN_IMPORT_PREFIXES = (
 B5_OUTER_LAYER_FORBIDDEN_IMPORT_PREFIXES = (
     "hydra.infrastructure",
     "hydra.presentation",
+)
+B6_DOMAIN_OUTER_LAYER_FORBIDDEN_IMPORT_PREFIXES = (
+    "hydra.application",
+    "hydra.adapters",
+    "hydra.infrastructure",
+    "hydra.presentation",
+)
+B6_APPLICATION_OUTER_LAYER_FORBIDDEN_IMPORT_PREFIXES = (
+    "hydra.adapters",
+    "hydra.infrastructure",
+    "hydra.presentation",
+)
+B6_ANALYSIS_FORBIDDEN_IMPORT_PREFIXES = (
+    "matplotlib",
+    "seaborn",
+    "plotly",
+    "pandas",
+    "numpy",
+)
+B6_EXPORT_FORBIDDEN_IMPORT_PREFIXES = (
+    "weasyprint",
+    "reportlab",
+    "pdfkit",
+    "jinja2",
 )
 PORTS_FORBIDDEN_IMPORT_PREFIXES = (
     "fastapi",
@@ -139,6 +170,10 @@ def parse_imports(file_path: Path) -> list[str]:
     return modules
 
 
+def parse_tree(file_path: Path) -> ast.AST:
+    return ast.parse(file_path.read_text(encoding="utf-8"))
+
+
 def assert_no_forbidden_imports(
     file_paths: Iterable[Path], forbidden_prefixes: tuple[str, ...]
 ) -> None:
@@ -174,6 +209,21 @@ def assert_no_keyword_matches(
             ), f"{file_path} contains forbidden keyword {pattern.pattern}"
 
 
+def assert_no_attribute_calls(
+    file_paths: Iterable[Path],
+    forbidden_attribute_names: tuple[str, ...],
+) -> None:
+    for file_path in file_paths:
+        tree = parse_tree(file_path)
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Call) or not isinstance(node.func, ast.Attribute):
+                continue
+
+            assert (
+                node.func.attr not in forbidden_attribute_names
+            ), f"{file_path} calls forbidden attribute {node.func.attr}"
+
+
 def iter_adapter_classes() -> list[type[Any]]:
     adapter_classes: list[type[Any]] = []
     package = importlib.import_module("hydra.adapters")
@@ -205,6 +255,20 @@ def test_backtesting_domain_model_is_framework_free() -> None:
     )
 
 
+def test_research_reporting_domain_model_is_framework_free() -> None:
+    assert_no_forbidden_imports(
+        [SOURCE_ROOT / "domain" / "research_reporting.py"],
+        DOMAIN_FORBIDDEN_IMPORT_PREFIXES,
+    )
+
+
+def test_research_reporting_domain_model_does_not_import_outer_layers() -> None:
+    assert_no_forbidden_imports(
+        [SOURCE_ROOT / "domain" / "research_reporting.py"],
+        B6_DOMAIN_OUTER_LAYER_FORBIDDEN_IMPORT_PREFIXES,
+    )
+
+
 def test_shared_is_framework_free() -> None:
     assert_no_forbidden_imports(iter_python_files("shared"), SHARED_FORBIDDEN_IMPORT_PREFIXES)
 
@@ -233,6 +297,26 @@ def test_strategy_research_service_does_not_import_fastapi_or_sqlalchemy() -> No
     assert_no_forbidden_imports(
         [SOURCE_ROOT / "application" / "strategy_research_service.py"],
         APPLICATION_FORBIDDEN_IMPORT_PREFIXES,
+    )
+
+
+def test_research_reporting_application_modules_do_not_import_frameworks() -> None:
+    assert_no_forbidden_imports(
+        (
+            SOURCE_ROOT / "application" / "research_reporting_dto.py",
+            SOURCE_ROOT / "application" / "research_reporting_service.py",
+        ),
+        B6_APPLICATION_FORBIDDEN_IMPORT_PREFIXES,
+    )
+
+
+def test_research_reporting_application_modules_do_not_import_outer_layers() -> None:
+    assert_no_forbidden_imports(
+        (
+            SOURCE_ROOT / "application" / "research_reporting_dto.py",
+            SOURCE_ROOT / "application" / "research_reporting_service.py",
+        ),
+        B6_APPLICATION_OUTER_LAYER_FORBIDDEN_IMPORT_PREFIXES,
     )
 
 
@@ -372,6 +456,46 @@ def test_b5_provider_does_not_import_filesystem_or_serialization_modules() -> No
     )
 
 
+def test_b6_application_modules_do_not_import_network_clients() -> None:
+    assert_no_forbidden_imports(
+        (
+            SOURCE_ROOT / "application" / "research_reporting_dto.py",
+            SOURCE_ROOT / "application" / "research_reporting_service.py",
+        ),
+        NETWORK_CLIENT_FORBIDDEN_IMPORT_PREFIXES,
+    )
+
+
+def test_b6_application_modules_do_not_import_filesystem_or_serialization_modules() -> None:
+    assert_no_forbidden_imports(
+        (
+            SOURCE_ROOT / "application" / "research_reporting_dto.py",
+            SOURCE_ROOT / "application" / "research_reporting_service.py",
+        ),
+        B5_FILESYSTEM_FORBIDDEN_IMPORT_PREFIXES,
+    )
+
+
+def test_b6_application_modules_do_not_import_analysis_libraries() -> None:
+    assert_no_forbidden_imports(
+        (
+            SOURCE_ROOT / "application" / "research_reporting_dto.py",
+            SOURCE_ROOT / "application" / "research_reporting_service.py",
+        ),
+        B6_ANALYSIS_FORBIDDEN_IMPORT_PREFIXES,
+    )
+
+
+def test_b6_application_modules_do_not_import_export_libraries() -> None:
+    assert_no_forbidden_imports(
+        (
+            SOURCE_ROOT / "application" / "research_reporting_dto.py",
+            SOURCE_ROOT / "application" / "research_reporting_service.py",
+        ),
+        B6_EXPORT_FORBIDDEN_IMPORT_PREFIXES,
+    )
+
+
 def test_codebase_does_not_introduce_simulated_execution_infrastructure_keywords() -> None:
     assert_no_keyword_matches(
         iter_code_files(CODE_DIRECTORIES),
@@ -404,6 +528,49 @@ def test_b5_provider_keeps_strategy_automation_keyword_guards() -> None:
     assert_no_keyword_matches(
         [SOURCE_ROOT / "adapters" / "strategy_research" / "deterministic_fixture_provider.py"],
         FORBIDDEN_STRATEGY_AUTOMATION_PATTERNS,
+    )
+
+
+def test_b6_modules_keep_exchange_keyword_guards() -> None:
+    assert_no_keyword_matches(
+        (
+            SOURCE_ROOT / "domain" / "research_reporting.py",
+            SOURCE_ROOT / "application" / "research_reporting_dto.py",
+            SOURCE_ROOT / "application" / "research_reporting_service.py",
+        ),
+        FORBIDDEN_EXCHANGE_PATTERNS,
+    )
+
+
+def test_b6_modules_keep_live_execution_keyword_guards() -> None:
+    assert_no_keyword_matches(
+        (
+            SOURCE_ROOT / "domain" / "research_reporting.py",
+            SOURCE_ROOT / "application" / "research_reporting_dto.py",
+            SOURCE_ROOT / "application" / "research_reporting_service.py",
+        ),
+        FORBIDDEN_LIVE_EXECUTION_PATTERNS,
+    )
+
+
+def test_b6_modules_keep_strategy_automation_keyword_guards() -> None:
+    assert_no_keyword_matches(
+        (
+            SOURCE_ROOT / "domain" / "research_reporting.py",
+            SOURCE_ROOT / "application" / "research_reporting_dto.py",
+            SOURCE_ROOT / "application" / "research_reporting_service.py",
+        ),
+        FORBIDDEN_STRATEGY_AUTOMATION_PATTERNS,
+    )
+
+
+def test_b6_modules_do_not_call_wall_clock_functions() -> None:
+    assert_no_attribute_calls(
+        (
+            SOURCE_ROOT / "domain" / "research_reporting.py",
+            SOURCE_ROOT / "application" / "research_reporting_service.py",
+        ),
+        ("now", "utcnow", "today"),
     )
 
 
