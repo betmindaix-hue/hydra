@@ -2,8 +2,9 @@
 
 Date: 2026-07-18
 Scope: HYDRA Engineering Task B3
-PR: TBD until pull request is opened
+PR: https://github.com/betmindaix-hue/hydra/pull/14
 Feature branch: `feat/b3-backtesting-skeleton`
+PR state: Draft
 
 ## What Changed
 
@@ -54,6 +55,11 @@ Feature branch: `feat/b3-backtesting-skeleton`
   - `make` is optional on the developer workstation
   - summary: `0 failures, 2 warnings`
 - `python -m uv run pre-commit run --all-files`: PASS
+
+## GitHub Workflow Status
+
+- `CI` pull request run `29650138548`: `Success`
+- `Security` pull request run `29650138546`: `Success`
 
 ## Domain Model Summary
 
@@ -119,8 +125,6 @@ Feature branch: `feat/b3-backtesting-skeleton`
 
 - B3 is intentionally a small synchronous skeleton and does not yet cover
   fees, slippage, partial fills, or richer analytics
-- full repository quality-gate and CI/Security evidence must be recorded after
-  the pull request is opened
 - local workstation validation reports expected optional-tool warnings for
   Docker and `make`
 
