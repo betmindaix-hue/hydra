@@ -79,6 +79,10 @@ B6_EXPORT_FORBIDDEN_IMPORT_PREFIXES = (
     "pdfkit",
     "jinja2",
 )
+B7_APPLICATION_MODULES = (
+    SOURCE_ROOT / "application" / "offline_research_scenario_dto.py",
+    SOURCE_ROOT / "application" / "offline_research_scenario_service.py",
+)
 PORTS_FORBIDDEN_IMPORT_PREFIXES = (
     "fastapi",
     "sqlalchemy",
@@ -496,6 +500,48 @@ def test_b6_application_modules_do_not_import_export_libraries() -> None:
     )
 
 
+def test_b7_application_modules_do_not_import_frameworks() -> None:
+    assert_no_forbidden_imports(
+        B7_APPLICATION_MODULES,
+        B6_APPLICATION_FORBIDDEN_IMPORT_PREFIXES,
+    )
+
+
+def test_b7_application_modules_do_not_import_outer_layers() -> None:
+    assert_no_forbidden_imports(
+        B7_APPLICATION_MODULES,
+        B6_APPLICATION_OUTER_LAYER_FORBIDDEN_IMPORT_PREFIXES,
+    )
+
+
+def test_b7_application_modules_do_not_import_network_clients() -> None:
+    assert_no_forbidden_imports(
+        B7_APPLICATION_MODULES,
+        NETWORK_CLIENT_FORBIDDEN_IMPORT_PREFIXES,
+    )
+
+
+def test_b7_application_modules_do_not_import_filesystem_or_serialization_modules() -> None:
+    assert_no_forbidden_imports(
+        B7_APPLICATION_MODULES,
+        B5_FILESYSTEM_FORBIDDEN_IMPORT_PREFIXES,
+    )
+
+
+def test_b7_application_modules_do_not_import_analysis_libraries() -> None:
+    assert_no_forbidden_imports(
+        B7_APPLICATION_MODULES,
+        B6_ANALYSIS_FORBIDDEN_IMPORT_PREFIXES,
+    )
+
+
+def test_b7_application_modules_do_not_import_export_libraries() -> None:
+    assert_no_forbidden_imports(
+        B7_APPLICATION_MODULES,
+        B6_EXPORT_FORBIDDEN_IMPORT_PREFIXES,
+    )
+
+
 def test_codebase_does_not_introduce_simulated_execution_infrastructure_keywords() -> None:
     assert_no_keyword_matches(
         iter_code_files(CODE_DIRECTORIES),
@@ -571,6 +617,32 @@ def test_b6_modules_do_not_call_wall_clock_functions() -> None:
             SOURCE_ROOT / "application" / "research_reporting_service.py",
         ),
         ("now", "utcnow", "today"),
+    )
+
+
+def test_b7_modules_keep_exchange_keyword_guards() -> None:
+    assert_no_keyword_matches(B7_APPLICATION_MODULES, FORBIDDEN_EXCHANGE_PATTERNS)
+
+
+def test_b7_modules_keep_live_execution_keyword_guards() -> None:
+    assert_no_keyword_matches(B7_APPLICATION_MODULES, FORBIDDEN_LIVE_EXECUTION_PATTERNS)
+
+
+def test_b7_modules_keep_strategy_automation_keyword_guards() -> None:
+    assert_no_keyword_matches(B7_APPLICATION_MODULES, FORBIDDEN_STRATEGY_AUTOMATION_PATTERNS)
+
+
+def test_b7_service_does_not_call_wall_clock_functions() -> None:
+    assert_no_attribute_calls(
+        [SOURCE_ROOT / "application" / "offline_research_scenario_service.py"],
+        ("now", "utcnow", "today"),
+    )
+
+
+def test_b7_service_does_not_import_fixture_strategy_provider() -> None:
+    assert_no_forbidden_imports(
+        [SOURCE_ROOT / "application" / "offline_research_scenario_service.py"],
+        ("hydra.adapters.strategy_research.deterministic_fixture_provider",),
     )
 
 
