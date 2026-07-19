@@ -2,9 +2,9 @@
 
 Date: 2026-07-19
 Scope: HYDRA Engineering Task B7
-PR: TBD until pull request is opened
+PR: https://github.com/betmindaix-hue/hydra/pull/18
 Feature branch: `feat/b7-end-to-end-offline-research-scenario`
-PR state: Not opened yet
+PR state: Draft
 
 ## What Changed
 
@@ -64,6 +64,16 @@ PR state: Not opened yet
   - `make` is optional on the developer workstation
   - summary: `0 failures, 2 warnings`
 - `python -m uv run pre-commit run --all-files`: PASS
+
+## GitHub Workflow Status
+
+- code change commit: `cc4c7c059581ec37fb909386c05a11a95d610047`
+- `CI` pull request run `29708433454`: `Success`
+- `Security` pull request run `29708433455`: `Success`
+- `Security` included successful `repository-security-baseline`,
+  `dependency-review`, and `codeql (python)` jobs
+- GitHub Actions emitted non-blocking Node.js 20 deprecation annotations for
+  upstream actions during CI and Security execution
 
 ## Scenario Summary
 
@@ -151,8 +161,9 @@ PR state: Not opened yet
 
 ## Remaining Risks
 
-- PR and GitHub workflow evidence are still pending because the draft pull
-  request has not been opened yet
+- GitHub Actions reported non-blocking Node.js 20 deprecation annotations for
+  upstream actions, so workflow action versions should be refreshed in a later
+  platform maintenance task
 - Docker validation remains authoritative in CI even though local quality gates
   passed without requiring Docker on the workstation
 - B7 intentionally covers a single deterministic scenario seam and does not yet
