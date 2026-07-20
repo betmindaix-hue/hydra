@@ -1,12 +1,14 @@
 # C2 Research Run Ranking and Selection Review
 
 Date: 2026-07-20
-Status: Local quality gates passed; PR evidence pending
+Status: Draft PR open; local and remote quality evidence verified
 
 ## Pull Request
 
-- PR: TBD until pull request is opened
+- PR: `https://github.com/betmindaix-hue/hydra/pull/21`
 - Feature branch: `feat/c2-research-run-ranking-selection`
+- PR state: `draft`
+- Head SHA: `28908e7c076003ce1ce56339d33e006375ac54de`
 
 ## What Changed
 
@@ -142,11 +144,23 @@ python -m uv run pre-commit run --all-files
 
 ## Remaining Risks
 
-- CI and Security workflow outcomes are pending until the draft PR is opened and
-  the remote checks complete.
 - Future weighted ranking or durable storage needs will require a separate
   design path and must not be inferred from C2.
+- The PR is intentionally still draft and should not be merged until review is
+  completed by maintainers.
+
+## CI and Security Evidence
+
+- CI pull request run `29784127625`: `completed / success`
+  - Job summary: `quality` passed, including Ruff, Black, Mypy, Pytest,
+    Alembic validation, repository security baseline checks, release readiness,
+    operations readiness, developer workstation checks, and Docker image build
+- Security pull request run `29784127655`: `completed / success`
+  - Job summary:
+    - `dependency-review`: pass
+    - `repository-security-baseline`: pass
+    - `codeql (python)`: pass
 
 ## Final Verdict
 
-PENDING
+PASS
