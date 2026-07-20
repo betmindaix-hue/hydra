@@ -127,10 +127,7 @@ python -m uv run pre-commit run --all-files
 - PR state: `draft`
 - Latest observed CI state: `pending`
 - Latest observed Security state: `pending`
-- Latest observed workflow references:
-  - CI `push`: `https://github.com/betmindaix-hue/hydra/actions/runs/29709266739`
-  - CI `pull_request`: `https://github.com/betmindaix-hue/hydra/actions/runs/29709282512`
-  - Security `pull_request`: `https://github.com/betmindaix-hue/hydra/actions/runs/29709282525`
+- Workflow evidence location: PR #19 checks tab and associated GitHub Actions runs
 
 ### External platform note
 
