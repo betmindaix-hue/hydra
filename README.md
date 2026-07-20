@@ -1,69 +1,64 @@
 # HYDRA
 
-HYDRA is a single-user quantitative crypto research platform focused on
-research, feature engineering, backtesting, paper trading and continuous
-evaluation.
+HYDRA is an offline-first quantitative research platform for deterministic
+market-data ingestion, strategy research, backtesting, and reporting. Live
+trading, exchange integrations, background workers, and network-dependent
+runtime features are intentionally out of scope.
 
-The `docs/` directory is the project's single source of truth. This skeleton is
-aligned with the SDS documents currently available:
+The `docs/` directory is authoritative. Milestone B currently rests on these
+core references:
 
-- `docs/00_READ_FIRST.md`
-- `docs/01_VISION.md`
-- `docs/02_CONSTITUTION.md`
-- `docs/03_PRODUCT_REQUIREMENTS.md`
-- `docs/04_SYSTEM_ARCHITECTURE.md`
-- `docs/05_DATA_MODEL.md`
-- `docs/README_NEXT.md`
+- `docs/adr/ADR-0001-hexagonal-architecture.md`
+- `docs/adr/ADR-0002-market-data-domain-model.md`
+- `docs/adr/ADR-0004-strategy-research-interface.md`
+- `docs/adr/ADR-0005-deterministic-fixture-strategy-provider.md`
+- `docs/adr/ADR-0006-research-reporting-foundation.md`
+- `docs/adr/ADR-0007-end-to-end-offline-research-scenario.md`
+- `docs/governance/Definition of Done.md`
+- `docs/governance/PR Workflow.md`
+- `docs/governance/Milestone B Entry Gate.md`
 
-## What is included
+## Current scope
 
-- FastAPI application skeleton
-- PostgreSQL-ready SQLAlchemy models
-- Redis-ready settings
-- Alembic migration setup
-- Docker and Docker Compose configuration
-- `uv`-based project metadata
-- Pytest smoke tests
-- Paper trading only, with live trading explicitly disabled
+- Offline market-data domain model and source descriptors
+- Offline dataset ingestion through explicit ports
+- Deterministic strategy research interface and fixture provider
+- Offline backtesting skeleton
+- Research reporting foundation
+- End-to-end offline research scenario orchestration
+- Platform scaffolding with FastAPI, PostgreSQL, Redis, Docker, Alembic, `uv`,
+  CI, and security guardrails
 
 ## Architecture summary
 
-Current pipeline:
+HYDRA follows Domain-Driven Design with Hexagonal Architecture under
+`src/hydra`:
 
-1. Market Collector
-2. Feature Engine
-3. Strategy Engine
-4. Decision Engine
-5. Risk Engine
-6. Paper Trading
-7. Performance
-8. Memory
+- `domain`: pure Python models and invariants
+- `application`: use-case orchestration and DTOs
+- `ports`: contracts between application and external concerns
+- `adapters`: port implementations such as deterministic fixture providers
+- `infrastructure`: configuration and persistence plumbing
+- `presentation`: HTTP entrypoints isolated from the domain
+- `shared`: cross-cutting support code
 
-Core entities:
-
-- MarketBar
-- FeatureSet
-- StrategySignal
-- Decision
-- PaperTrade
-- PerformanceSnapshot
-- Pattern
-- Experiment
+Dependency direction is intentionally inward: adapters, infrastructure, and
+presentation depend on ports and application services, while the domain remains
+framework-free.
 
 ## Quick start
 
 1. Copy `.env.example` to `.env`.
-   Use `.env.local.example` as the preferred workstation reference and `.env.test.example` for automated test overrides.
-2. Start infrastructure with `docker compose up -d postgres redis`.
-3. If `uv` is not installed yet, run `python -m pip install uv`.
-4. Install dependencies with `uv sync`.
-5. Run migrations with `uv run alembic upgrade head`.
-6. Start the API with `uv run uvicorn hydra.main:app --reload`.
-7. Run tests with `uv run pytest`.
+2. If `uv` is not installed yet, run `python -m pip install uv`.
+3. Install dependencies with `uv sync --frozen --group dev`.
+4. Run quality gates with `python tools/local_verify.py`.
+5. Start local infrastructure only when needed with `docker compose up -d postgres redis`.
+6. Apply migrations with `uv run alembic upgrade head`.
+7. Start the presentation skeleton with `uv run uvicorn hydra.main:app --reload`.
 
 ## Scope guardrails
 
-- v1 does not include live execution.
-- Raw market payloads must be preserved.
-- Modules should stay independent.
-- Every future architectural change should be reflected in `docs/`.
+- Offline research only; no live trading or exchange connectivity
+- No market collector, WebSocket runtime, or real-money operations
+- Deterministic and reproducible workflows are preferred over dynamic behavior
+- Every architectural or scope change must be reflected in `docs/`

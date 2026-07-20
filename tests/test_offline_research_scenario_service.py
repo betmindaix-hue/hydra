@@ -23,6 +23,7 @@ from hydra.application.market_data_ingestion_dto import (
     OfflineMarketDataRecord,
 )
 from hydra.application.offline_research_scenario_dto import (
+    OfflineResearchScenarioError,
     OfflineResearchScenarioRequest,
     OfflineResearchScenarioResult,
     OfflineResearchScenarioStage,
@@ -489,3 +490,71 @@ def test_request_stores_records_and_notes_immutably() -> None:
     assert isinstance(request.notes, tuple)
     assert len(request.records) == 2
     assert request.notes == ("alpha", "beta")
+
+
+def test_request_rejects_invalid_record_collections() -> None:
+    with pytest.raises(ValueError, match="records must be an iterable"):
+        make_request(records="not-records")
+
+    with pytest.raises(ValueError, match="records must not be empty"):
+        make_request(records=())
+
+    with pytest.raises(ValueError, match="must contain only OfflineMarketDataRecord"):
+        make_request(records=(object(),))
+
+
+def test_request_rejects_invalid_strategy_provider_and_time_window() -> None:
+    with pytest.raises(ValueError, match="must implement StrategyResearchProviderPort"):
+        make_request(strategy_provider=object())
+
+    with pytest.raises(ValueError, match="must be before end_timestamp"):
+        make_request(
+            start_timestamp=datetime(2026, 7, 19, 12, 1, tzinfo=UTC),
+            end_timestamp=datetime(2026, 7, 19, 12, 1, tzinfo=UTC),
+        )
+
+
+def test_request_accepts_duck_typed_strategy_provider() -> None:
+    provider = CountingStrategyProvider()
+    request = make_request(strategy_provider=provider)
+
+    assert request.strategy_provider is provider
+
+
+def test_scenario_error_normalizes_message_and_field_name() -> None:
+    error = OfflineResearchScenarioError(
+        stage=OfflineResearchScenarioStage.REPORTING,
+        message="  report failed  ",
+        field_name="  report  ",
+    )
+
+    assert error.message == "report failed"
+    assert error.field_name == "report"
+
+    with pytest.raises(ValueError, match="message cannot be blank"):
+        OfflineResearchScenarioError(
+            stage=OfflineResearchScenarioStage.REPORTING,
+            message="   ",
+        )
+
+
+def test_result_validates_embedded_types_and_success_property() -> None:
+    success_result = OfflineResearchScenarioService().execute(make_request())
+
+    assert success_result.successful is True
+    assert OfflineResearchScenarioResult(scenario_id="b7-incomplete").successful is False
+
+    with pytest.raises(
+        ValueError,
+        match="ingestion_result must be an OfflineDatasetIngestionResult",
+    ):
+        OfflineResearchScenarioResult(
+            scenario_id="b7-invalid-ingestion",
+            ingestion_result=object(),  # type: ignore[arg-type]
+        )
+
+    with pytest.raises(ValueError, match="errors must contain only OfflineResearchScenarioError"):
+        OfflineResearchScenarioResult(
+            scenario_id="b7-invalid-errors",
+            errors=(object(),),  # type: ignore[arg-type]
+        )

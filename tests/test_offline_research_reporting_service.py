@@ -8,6 +8,7 @@ import pytest
 from hydra.application.backtesting_dto import BacktestRunSummary
 from hydra.application.backtesting_service import OfflineBacktestingService
 from hydra.application.research_reporting_dto import (
+    ResearchReportGenerationError,
     ResearchReportGenerationResult,
     ResearchReportRequest,
 )
@@ -568,3 +569,67 @@ def test_invalid_request_produces_errors_without_report() -> None:
     assert isinstance(result, ResearchReportGenerationResult)
     assert result.report is None
     assert len(result.errors) == 1
+
+
+def test_report_request_normalizes_title_and_notes() -> None:
+    request = ResearchReportRequest(
+        report_id="  b6-report-request  ",
+        backtest_result=make_backtest_result(),
+        strategy_research_result=make_strategy_research_result(),
+        title="  Report Title  ",
+        notes=("  note one  ", " ", "note two"),
+    )
+
+    assert request.report_id == "b6-report-request"
+    assert request.title == "Report Title"
+    assert request.notes == ("note one", "note two")
+
+
+def test_report_request_rejects_invalid_backtest_and_strategy_result_types() -> None:
+    with pytest.raises(ValueError, match="backtest_result must be a BacktestResult"):
+        ResearchReportRequest(
+            report_id="b6-invalid-backtest",
+            backtest_result=object(),  # type: ignore[arg-type]
+        )
+
+    with pytest.raises(
+        ValueError,
+        match="strategy_research_result must be a StrategyResearchResult",
+    ):
+        ResearchReportRequest(
+            report_id="b6-invalid-strategy",
+            backtest_result=make_backtest_result(),
+            strategy_research_result=object(),  # type: ignore[arg-type]
+        )
+
+
+def test_generation_error_normalizes_fields_and_validates_blank_messages() -> None:
+    error = ResearchReportGenerationError(
+        message="  report failed  ",
+        field_name="  report  ",
+    )
+
+    assert error.message == "report failed"
+    assert error.field_name == "report"
+
+    with pytest.raises(ValueError, match="message cannot be blank"):
+        ResearchReportGenerationError(message="   ")
+
+
+def test_generation_result_rejects_invalid_error_entries_and_mixed_states() -> None:
+    with pytest.raises(ValueError, match="must contain only ResearchReportGenerationError"):
+        ResearchReportGenerationResult(errors=(object(),))  # type: ignore[arg-type]
+
+    generated_result = OfflineResearchReportingService().generate(
+        ResearchReportRequest(
+            report_id="b6-generated-report",
+            backtest_result=make_backtest_result(),
+        )
+    )
+    assert generated_result.report is not None
+
+    with pytest.raises(ValueError, match="cannot contain both a report and errors"):
+        ResearchReportGenerationResult(
+            report=generated_result.report,
+            errors=(ResearchReportGenerationError(message="conflict"),),
+        )

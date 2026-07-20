@@ -175,6 +175,30 @@ def test_metric_snapshot_rejects_invalid_values(
         )
 
 
+def test_metric_snapshot_rejects_non_numeric_and_non_integer_types() -> None:
+    with pytest.raises(ValueError, match="initial_cash must be a number"):
+        MetricSnapshot(
+            initial_cash=True,
+            ending_cash=1100,
+            ending_equity=1100,
+            total_return=0.1,
+            max_drawdown=0.05,
+            trade_count=2,
+            signal_count=3,
+        )
+
+    with pytest.raises(ValueError, match="trade_count must be an integer"):
+        MetricSnapshot(
+            initial_cash=1000,
+            ending_cash=1100,
+            ending_equity=1100,
+            total_return=0.1,
+            max_drawdown=0.05,
+            trade_count=1.5,  # type: ignore[arg-type]
+            signal_count=3,
+        )
+
+
 def test_equity_curve_summary_accepts_valid_values() -> None:
     summary = make_equity_curve_summary()
 
@@ -227,6 +251,34 @@ def test_equity_curve_summary_rejects_invalid_min_max_equity() -> None:
         )
 
 
+def test_equity_curve_summary_rejects_reversed_timestamps_and_negative_values() -> None:
+    with pytest.raises(ValueError, match="must be before or equal to last_timestamp"):
+        EquityCurveSummary(
+            point_count=1,
+            first_timestamp=datetime(2026, 7, 18, 10, 5, tzinfo=UTC),
+            last_timestamp=datetime(2026, 7, 18, 10, 0, tzinfo=UTC),
+            starting_equity=1000,
+            ending_equity=1000,
+            min_equity=1000,
+            max_equity=1000,
+            lowest_cash=1000,
+            highest_position_quantity=0,
+        )
+
+    with pytest.raises(ValueError, match="lowest_cash must be non-negative"):
+        EquityCurveSummary(
+            point_count=1,
+            first_timestamp=datetime(2026, 7, 18, 10, 0, tzinfo=UTC),
+            last_timestamp=datetime(2026, 7, 18, 10, 0, tzinfo=UTC),
+            starting_equity=1000,
+            ending_equity=1000,
+            min_equity=1000,
+            max_equity=1000,
+            lowest_cash=-1,
+            highest_position_quantity=0,
+        )
+
+
 def test_signal_summary_accepts_optional_none_counts() -> None:
     summary = SignalSummary(backtest_signal_count=2)
 
@@ -239,6 +291,13 @@ def test_signal_summary_rejects_negative_counts() -> None:
         SignalSummary(
             backtest_signal_count=2,
             research_error_count=-1,
+        )
+
+
+def test_signal_summary_rejects_non_integer_counts() -> None:
+    with pytest.raises(ValueError, match="must be an integer"):
+        SignalSummary(
+            backtest_signal_count=True,
         )
 
 
@@ -269,6 +328,32 @@ def test_simulated_trade_summary_rejects_count_mismatch() -> None:
             sell_count=1,
             first_trade_timestamp=datetime(2026, 7, 18, 10, 0, tzinfo=UTC),
             last_trade_timestamp=datetime(2026, 7, 18, 10, 5, tzinfo=UTC),
+        )
+
+
+def test_simulated_trade_summary_rejects_invalid_timestamp_combinations() -> None:
+    with pytest.raises(ValueError, match="must be None when trade_count is 0"):
+        SimulatedTradeSummary(
+            trade_count=0,
+            buy_count=0,
+            sell_count=0,
+            first_trade_timestamp=datetime(2026, 7, 18, 10, 0, tzinfo=UTC),
+        )
+
+    with pytest.raises(ValueError, match="timestamps are required when trade_count is positive"):
+        SimulatedTradeSummary(
+            trade_count=1,
+            buy_count=1,
+            sell_count=0,
+        )
+
+    with pytest.raises(ValueError, match="must be before or equal to last_trade_timestamp"):
+        SimulatedTradeSummary(
+            trade_count=1,
+            buy_count=1,
+            sell_count=0,
+            first_trade_timestamp=datetime(2026, 7, 18, 10, 5, tzinfo=UTC),
+            last_trade_timestamp=datetime(2026, 7, 18, 10, 0, tzinfo=UTC),
         )
 
 
@@ -308,6 +393,29 @@ def test_risk_snapshot_rejects_invalid_values() -> None:
         )
 
 
+def test_risk_snapshot_rejects_negative_position_values() -> None:
+    with pytest.raises(ValueError, match="final_position_quantity must be non-negative"):
+        RiskSnapshot(
+            max_drawdown=0.1,
+            total_return=0,
+            final_position_open=True,
+            final_position_quantity=-1,
+            final_position_average_entry_price=0,
+        )
+
+    with pytest.raises(
+        ValueError,
+        match="final_position_average_entry_price must be non-negative",
+    ):
+        RiskSnapshot(
+            max_drawdown=0.1,
+            total_return=0,
+            final_position_open=True,
+            final_position_quantity=1,
+            final_position_average_entry_price=-1,
+        )
+
+
 def test_research_report_strips_title_and_notes() -> None:
     report = make_report()
 
@@ -327,3 +435,59 @@ def test_research_report_stores_notes_immutably() -> None:
     assert isinstance(report.notes, tuple)
     with pytest.raises(TypeError):
         report.notes[0] = "changed"  # type: ignore[index]
+
+
+def test_research_report_rejects_invalid_component_types() -> None:
+    with pytest.raises(ValueError, match="metrics must be a MetricSnapshot"):
+        ResearchReport(
+            report_id=ResearchReportId("report-2"),
+            title="Report",
+            backtest_id=BacktestId("backtest-2"),
+            symbol=Symbol("btcusdt"),
+            market=Market("spot"),
+            timeframe=Timeframe.MINUTE_1,
+            time_range=make_time_range(),
+            source=DataSourceDescriptor(name="report-series"),
+            metrics="invalid",  # type: ignore[arg-type]
+            equity_curve=make_equity_curve_summary(),
+            signals=make_signal_summary(),
+            simulated_trades=make_trade_summary(),
+            risk=make_risk_snapshot(),
+        )
+
+
+def test_research_report_rejects_invalid_title_and_note_values() -> None:
+    with pytest.raises(ValueError, match="title must be a string"):
+        ResearchReport(
+            report_id=ResearchReportId("report-3"),
+            title=1,  # type: ignore[arg-type]
+            backtest_id=BacktestId("backtest-3"),
+            symbol=Symbol("btcusdt"),
+            market=Market("spot"),
+            timeframe=Timeframe.MINUTE_1,
+            time_range=make_time_range(),
+            source=DataSourceDescriptor(name="report-series"),
+            metrics=make_metric_snapshot(),
+            equity_curve=make_equity_curve_summary(),
+            signals=make_signal_summary(),
+            simulated_trades=make_trade_summary(),
+            risk=make_risk_snapshot(),
+        )
+
+    with pytest.raises(ValueError, match="notes must contain only strings"):
+        ResearchReport(
+            report_id=ResearchReportId("report-4"),
+            title="Report",
+            backtest_id=BacktestId("backtest-4"),
+            symbol=Symbol("btcusdt"),
+            market=Market("spot"),
+            timeframe=Timeframe.MINUTE_1,
+            time_range=make_time_range(),
+            source=DataSourceDescriptor(name="report-series"),
+            metrics=make_metric_snapshot(),
+            equity_curve=make_equity_curve_summary(),
+            signals=make_signal_summary(),
+            simulated_trades=make_trade_summary(),
+            risk=make_risk_snapshot(),
+            notes=("valid", 1),  # type: ignore[arg-type]
+        )

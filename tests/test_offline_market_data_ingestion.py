@@ -10,7 +10,7 @@ from hydra.application.market_data_ingestion_dto import (
     OfflineMarketDataRecord,
 )
 from hydra.application.market_data_ingestion_service import OfflineMarketDataIngestionService
-from hydra.domain.market_data import DataSourceDescriptor
+from hydra.domain.market_data import DataSourceDescriptor, OHLCVBar
 
 
 def make_record(**overrides: object) -> OfflineMarketDataRecord:
@@ -364,3 +364,110 @@ def test_timestamp_string_with_z_suffix_is_normalized() -> None:
 
     assert len(result.series) == 1
     assert result.series[0].bars[0].timestamp == datetime(2026, 7, 17, 12, 0, tzinfo=UTC)
+
+
+def test_invalid_timestamp_string_is_rejected_and_reported() -> None:
+    service = OfflineMarketDataIngestionService()
+    result = service.execute(
+        OfflineDatasetIngestionRequest(
+            dataset_name="bad-timestamp",
+            records=(make_record(timestamp="not-a-timestamp"),),
+        )
+    )
+
+    assert not result.series
+    assert len(result.errors) == 1
+    assert result.errors[0].field_name == "timestamp"
+    assert "valid ISO 8601" in result.errors[0].message
+
+
+def test_blank_numeric_strings_and_boolean_values_are_rejected() -> None:
+    service = OfflineMarketDataIngestionService()
+
+    blank_numeric_result = service.execute(
+        OfflineDatasetIngestionRequest(
+            dataset_name="blank-open",
+            records=(make_record(open_price="   "),),
+        )
+    )
+    boolean_numeric_result = service.execute(
+        OfflineDatasetIngestionRequest(
+            dataset_name="bool-volume",
+            records=(make_record(volume=True),),
+        )
+    )
+
+    assert len(blank_numeric_result.errors) == 1
+    assert blank_numeric_result.errors[0].field_name == "open_price"
+    assert "cannot be blank" in blank_numeric_result.errors[0].message
+    assert len(boolean_numeric_result.errors) == 1
+    assert boolean_numeric_result.errors[0].field_name == "volume"
+    assert "must be numeric" in boolean_numeric_result.errors[0].message
+
+
+def test_non_string_timeframe_is_rejected_and_reported() -> None:
+    service = OfflineMarketDataIngestionService()
+    result = service.execute(
+        OfflineDatasetIngestionRequest(
+            dataset_name="integer-timeframe",
+            records=(make_record(timeframe=1),),
+        )
+    )
+
+    assert not result.series
+    assert len(result.errors) == 1
+    assert result.errors[0].field_name == "timeframe"
+    assert "timeframe must be a string" in result.errors[0].message
+
+
+def test_source_payload_validation_errors_are_reported_without_loading_invalid_records() -> None:
+    source = InMemoryOfflineDatasetSource(
+        datasets={
+            "fixture-dataset": (
+                {
+                    "symbol": "xrpusdt",
+                    "market": "spot",
+                    "timeframe": "1m",
+                    "timestamp": "2026-07-17T12:00:00+00:00",
+                    "open_price": "1.0",
+                    "high_price": "1.1",
+                    "low_price": "0.9",
+                    "close_price": "1.05",
+                    "volume": "5000",
+                },
+                {"symbol": "xrpusdt"},
+            )
+        }
+    )
+    service = OfflineMarketDataIngestionService()
+
+    result = service.execute(
+        OfflineDatasetIngestionRequest(
+            dataset_name="fixture-dataset",
+            source=source,
+        )
+    )
+
+    assert len(result.series) == 1
+    assert len(result.errors) == 1
+    assert result.errors[0].field_name == "record"
+    assert "missing required fields" in result.errors[0].message
+
+
+def test_unknown_validation_message_keeps_field_name_empty() -> None:
+    class FailingIngestionService(OfflineMarketDataIngestionService):
+        def _build_bar(self, record: OfflineMarketDataRecord) -> OHLCVBar:
+            del record
+            raise ValueError("unexpected validation failure")
+
+    service = FailingIngestionService()
+    result = service.execute(
+        OfflineDatasetIngestionRequest(
+            dataset_name="unknown-field",
+            records=(make_record(),),
+        )
+    )
+
+    assert not result.series
+    assert len(result.errors) == 1
+    assert result.errors[0].field_name is None
