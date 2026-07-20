@@ -1,12 +1,14 @@
 # C1 In-Memory Research Run Catalog Review
 
 Date: 2026-07-20
-Status: Local quality gates passed; PR evidence pending
+Status: Draft PR open; local and remote quality evidence verified
 
 ## Pull Request
 
-- PR: TBD until pull request is opened
+- PR: `https://github.com/betmindaix-hue/hydra/pull/20`
 - Feature branch: `feat/c1-in-memory-research-run-catalog`
+- PR state: `draft`
+- Head SHA: `e1a9121a190f8ca452f614df2aebba2c98ae2c8b`
 
 ## What Changed
 
@@ -142,12 +144,23 @@ python -m uv run pre-commit run --all-files
 
 ## Remaining Risks
 
-- PR workflow evidence still needs to be recorded.
-- CI and Security workflow outcomes are pending until the draft PR is opened and
-  the remote checks complete.
 - Future persistence or presentation needs will require a separate design path
   and must not be inferred from C1.
+- The PR is intentionally still draft and should not be merged until review is
+  completed by maintainers.
+
+## CI and Security Evidence
+
+- CI pull request run `29782360495`: `completed / success`
+  - Job summary: `quality` passed, including Ruff, Black, Mypy, Pytest,
+    Alembic validation, repository security baseline checks, release readiness,
+    operations readiness, developer workstation checks, and Docker image build
+- Security pull request run `29782360316`: `completed / success`
+  - Job summary:
+    - `dependency-review`: pass
+    - `repository-security-baseline`: pass
+    - `codeql (python)`: pass
 
 ## Final Verdict
 
-PENDING
+PASS
