@@ -1,8 +1,7 @@
 # B8 Milestone B Final Hardening Review
 
-Date: 2026-07-19
-Status: Draft PR opened; local hardening complete; PR workflows pending due
-GitHub Actions incident
+Date: 2026-07-20
+Status: Draft PR open; local hardening complete; PR CI and Security evidence verified
 
 ## Scope
 
@@ -125,27 +124,22 @@ python -m uv run pre-commit run --all-files
 - Base branch: `main`
 - Feature branch: `chore/b8-milestone-b-final-hardening-review`
 - PR state: `draft`
-- Latest observed CI state: `pending`
-- Latest observed Security state: `pending`
-- Workflow evidence location: PR #19 checks tab and associated GitHub Actions runs
-
-### External platform note
-
-As of 2026-07-20, the PR-level workflow evidence is blocked by an active GitHub
-Actions incident. GitHub Status reported degraded Actions performance and noted
-that new workflows may delay or fail to start. The PR checks for `quality`,
-`repository-security-baseline`, `dependency-review`, and `codeql (python)`
-remained pending during this review window.
+- CI pull request run `29709545945`: `completed / success`
+- Security pull request run `29709545962`: `completed / success`
+- PR checks snapshot:
+  - `quality`: pass
+  - `repository-security-baseline`: pass
+  - `dependency-review`: pass
+  - `codeql (python)`: pass
 
 ## Risks
 
-- Final verdict depends on PR-level CI and Security confirmation after the
-  external GitHub Actions incident clears.
 - Some non-core modules outside the Milestone B execution path still have lower
   coverage than the domain/application core.
 - Local developer workstation checks still report optional Docker and `make`
-  availability warnings, although these are non-blocking for the repository.
+  availability warnings, but these are local-only and non-blocking for release
+  readiness because CI validated the repository gates independently.
 
 ## Current Verdict
 
-PASS WITH WARNINGS until PR-level CI and Security complete successfully.
+PASS
