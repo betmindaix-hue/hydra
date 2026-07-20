@@ -1,7 +1,8 @@
 # B8 Milestone B Final Hardening Review
 
 Date: 2026-07-19
-Status: In progress until PR and workflow evidence are attached
+Status: Draft PR opened; local hardening complete; PR workflows pending due
+GitHub Actions incident
 
 ## Scope
 
@@ -120,23 +121,34 @@ python -m uv run pre-commit run --all-files
 
 ## PR and Workflow Evidence
 
-- Draft PR: `TBD`
+- Draft PR: `https://github.com/betmindaix-hue/hydra/pull/19`
 - Base branch: `main`
 - Feature branch: `chore/b8-milestone-b-final-hardening-review`
-- CI run: `TBD`
-- Security run: `TBD`
+- PR state: `draft`
+- Latest observed CI state: `pending`
+- Latest observed Security state: `pending`
+- Latest observed workflow references:
+  - CI `push`: `https://github.com/betmindaix-hue/hydra/actions/runs/29709266739`
+  - CI `pull_request`: `https://github.com/betmindaix-hue/hydra/actions/runs/29709282512`
+  - Security `pull_request`: `https://github.com/betmindaix-hue/hydra/actions/runs/29709282525`
 
-This section will be updated after the branch is pushed and the draft PR is
-opened.
+### External platform note
+
+As of 2026-07-20, the PR-level workflow evidence is blocked by an active GitHub
+Actions incident. GitHub Status reported degraded Actions performance and noted
+that new workflows may delay or fail to start. The PR checks for `quality`,
+`repository-security-baseline`, `dependency-review`, and `codeql (python)`
+remained pending during this review window.
 
 ## Risks
 
-- Final verdict depends on PR-level CI and Security confirmation.
+- Final verdict depends on PR-level CI and Security confirmation after the
+  external GitHub Actions incident clears.
 - Some non-core modules outside the Milestone B execution path still have lower
   coverage than the domain/application core.
 - Local developer workstation checks still report optional Docker and `make`
   availability warnings, although these are non-blocking for the repository.
 
-## Preliminary Verdict
+## Current Verdict
 
-PASS locally, pending PR-level CI and Security evidence.
+PASS WITH WARNINGS until PR-level CI and Security complete successfully.
