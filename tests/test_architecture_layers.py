@@ -88,6 +88,10 @@ C1_APPLICATION_MODULES = (
     SOURCE_ROOT / "application" / "research_run_catalog_dto.py",
     SOURCE_ROOT / "application" / "research_run_catalog_service.py",
 )
+C2_APPLICATION_MODULES = (
+    SOURCE_ROOT / "application" / "research_run_ranking_dto.py",
+    SOURCE_ROOT / "application" / "research_run_ranking_service.py",
+)
 PORTS_FORBIDDEN_IMPORT_PREFIXES = (
     "fastapi",
     "sqlalchemy",
@@ -152,6 +156,14 @@ FORBIDDEN_STRATEGY_AUTOMATION_PATTERNS = tuple(
     )
 )
 C1_USABILITY_SCOPE_FORBIDDEN_PATTERNS = tuple(
+    re.compile(pattern, re.IGNORECASE)
+    for pattern in (
+        rf"\b{'dash' + 'board'}\b",
+        rf"\b{'ex' + 'port'}\b",
+        rf"\b{'chart' + r'[\s_]*' + 'rendering'}\b",
+    )
+)
+C2_USABILITY_SCOPE_FORBIDDEN_PATTERNS = tuple(
     re.compile(pattern, re.IGNORECASE)
     for pattern in (
         rf"\b{'dash' + 'board'}\b",
@@ -741,6 +753,91 @@ def test_c1_modules_keep_usability_scope_keyword_guards() -> None:
     assert_no_keyword_matches(
         C1_APPLICATION_MODULES,
         C1_USABILITY_SCOPE_FORBIDDEN_PATTERNS,
+    )
+
+
+def test_c2_application_modules_do_not_import_frameworks() -> None:
+    assert_no_forbidden_imports(
+        C2_APPLICATION_MODULES,
+        B6_APPLICATION_FORBIDDEN_IMPORT_PREFIXES,
+    )
+
+
+def test_c2_application_modules_do_not_import_outer_layers() -> None:
+    assert_no_forbidden_imports(
+        C2_APPLICATION_MODULES,
+        B6_APPLICATION_OUTER_LAYER_FORBIDDEN_IMPORT_PREFIXES,
+    )
+
+
+def test_c2_application_modules_do_not_import_network_clients() -> None:
+    assert_no_forbidden_imports(
+        C2_APPLICATION_MODULES,
+        NETWORK_CLIENT_FORBIDDEN_IMPORT_PREFIXES,
+    )
+
+
+def test_c2_application_modules_do_not_import_filesystem_or_serialization_modules() -> None:
+    assert_no_forbidden_imports(
+        C2_APPLICATION_MODULES,
+        B5_FILESYSTEM_FORBIDDEN_IMPORT_PREFIXES,
+    )
+
+
+def test_c2_application_modules_do_not_import_analysis_libraries() -> None:
+    assert_no_forbidden_imports(
+        C2_APPLICATION_MODULES,
+        B6_ANALYSIS_FORBIDDEN_IMPORT_PREFIXES,
+    )
+
+
+def test_c2_application_modules_do_not_import_rendering_libraries() -> None:
+    assert_no_forbidden_imports(
+        C2_APPLICATION_MODULES,
+        B6_EXPORT_FORBIDDEN_IMPORT_PREFIXES,
+    )
+
+
+def test_c2_service_does_not_call_wall_clock_functions() -> None:
+    assert_no_attribute_calls(
+        [SOURCE_ROOT / "application" / "research_run_ranking_service.py"],
+        ("now", "utcnow", "today"),
+    )
+
+
+def test_c2_service_does_not_import_fixture_strategy_provider() -> None:
+    assert_no_forbidden_imports(
+        [SOURCE_ROOT / "application" / "research_run_ranking_service.py"],
+        ("hydra.adapters.strategy_research.deterministic_fixture_provider",),
+    )
+
+
+def test_c2_modules_keep_exchange_keyword_guards() -> None:
+    assert_no_keyword_matches(C2_APPLICATION_MODULES, FORBIDDEN_EXCHANGE_PATTERNS)
+
+
+def test_c2_modules_keep_live_execution_keyword_guards() -> None:
+    assert_no_keyword_matches(C2_APPLICATION_MODULES, FORBIDDEN_LIVE_EXECUTION_PATTERNS)
+
+
+def test_c2_modules_keep_runtime_boundary_keyword_guards() -> None:
+    assert_no_keyword_matches(
+        C2_APPLICATION_MODULES,
+        FORBIDDEN_SIMULATION_INFRA_PATTERNS,
+    )
+
+
+def test_c2_modules_keep_strategy_automation_keyword_guards() -> None:
+    assert_no_keyword_matches(
+        C2_APPLICATION_MODULES,
+        FORBIDDEN_STRATEGY_AUTOMATION_PATTERNS,
+    )
+
+
+def test_c2_modules_keep_usability_scope_keyword_guards() -> None:
+    assert_no_keyword_matches(
+        C2_APPLICATION_MODULES,
+        C2_USABILITY_SCOPE_FORBIDDEN_PATTERNS,
     )
 
 
