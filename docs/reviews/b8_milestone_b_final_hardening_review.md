@@ -1,7 +1,7 @@
 # B8 Milestone B Final Hardening Review
 
 Date: 2026-07-20
-Status: Draft PR open; local hardening complete; PR CI and Security evidence verified
+Status: PR ready for review; local hardening complete; PR CI and Security evidence verified
 
 ## Scope
 
@@ -120,12 +120,13 @@ python -m uv run pre-commit run --all-files
 
 ## PR and Workflow Evidence
 
-- Draft PR: `https://github.com/betmindaix-hue/hydra/pull/19`
+- PR: `https://github.com/betmindaix-hue/hydra/pull/19`
 - Base branch: `main`
 - Feature branch: `chore/b8-milestone-b-final-hardening-review`
-- PR state: `draft`
-- CI pull request run `29709545945`: `completed / success`
-- Security pull request run `29709545962`: `completed / success`
+- PR state: `ready for review / not draft`
+- Current head SHA: `92a28c22fdbe5e3734829747b55020ef88ba3462`
+- CI pull request run `29780427308`: `completed / success`
+- Security pull request run `29780426984`: `completed / success`
 - PR checks snapshot:
   - `quality`: pass
   - `repository-security-baseline`: pass
